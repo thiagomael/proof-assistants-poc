@@ -8,11 +8,13 @@ Open Scope R_scope.
 Open Scope bool_scope.
 
 Definition is_valid_prob (p: R): Prop := 0 <= p <= 1.
+Definition opt_is_valid_prob (o: option R): Prop :=
+match o with
+  | Some p => 0 <= p <= 1
+  | None   => False
+end.
 
-Definition TransitionMatrix (S: Type) (V: Type) := S -> list (prod S V).
-
-Definition summation {S: Type} (l: list (prod S R)) : R :=
-    fold_left (fun (a: R) ( e: prod S R ) => a + (snd e) ) l 0.
+Require Import Coq.FSets.FMapWeakList.
 
 
 Parameter State : Type.
@@ -21,8 +23,31 @@ Parameter State : Type.
    This happens because Coq lacks the excluded middle axiom (P V ~P).
 *)
 Hypothesis State_eq_dec : forall x y:State, {x = y} + {x <> y}.
+
+Module DecidableState.
+  (* Eq module type *)
+  Definition t := State.
+  Definition eq : t -> t -> Prop := @eq t.
+  (* IsEqOrig module type: defines eq as an equivalence class *)
+  Definition eq_refl := @eq_refl t.
+  Definition eq_sym := @eq_sym t.
+  Definition eq_trans := @eq_trans t.
+  (* HasEqDec module type: equality is decidable *)
+  Definition eq_dec := State_eq_dec.
+End DecidableState.
+
+
+Module StateMaps := FMapWeakList.Make DecidableState.
+Definition TransitionMatrix (t: Type) := StateMaps.t (StateMaps.t t).
+
+
+Definition summation {S: Type} (l: list (prod S R)) : R :=
+    fold_left (fun (a: R) ( e: prod S R ) => a + (snd e) ) l 0.
+Definition sum_in_map (m: StateMaps.t R) : R := summation (StateMaps.elements m).
+
 Parameter Var : Type.
 Hypothesis Var_eq_dec : forall x y:Var, {x = y} + {x <> y}.
+
 
 Inductive RatExpr : Type :=
   | Const:  R -> RatExpr
@@ -51,19 +76,27 @@ Fixpoint vars (e: RatExpr) : set Var :=
 Section NonParametric.
 Record DTMC : Type := { S:  set State;
                         s0: State;
-                        P:  TransitionMatrix State R;
+                        P:  TransitionMatrix R;
                         T:  set State }.
 
 
 
-(*Notation "P [ s, s' ]" := (P s) *)
+
+Definition bimap {T: Type} (s s': State) (m: TransitionMatrix T): option T :=
+  match StateMaps.find s m with
+  | Some val => StateMaps.find s' val
+  | None     => None
+  end.
+
+Notation "m [ s , s' ]" := (bimap s s' m) (at level 0).
 
 (** Well-formed DTMC *)
 Definition wf_DTMC (d: DTMC) : Prop :=
   (In d.(s0) d.(S))
   /\ (incl d.(T) d.(S))
-  (*/\ forall s s': State, is_valid_prob (d.(P) s s') *)
-  /\ forall s: State, In s d.(S) -> summation ((d.(P)) s) = 1.
+  /\ forall s s': State, opt_is_valid_prob (d.(P)[s, s'])
+  /\ forall s: State,
+       In s d.(S) -> option_map sum_in_map (StateMaps.find s d.(P)) = Some 1.
 
 End NonParametric.
 
@@ -88,13 +121,13 @@ Module Parametric.
 Record PMC : Type := { S:  set State;
                        s0: State;
                        X:  set Var;
-                       P:  TransitionMatrix State (RatExpr);
+                       P:  TransitionMatrix (RatExpr + R);
                        T:  set State }.
 (** Well-formed PMC *)
 Definition wf_PMC (p: PMC) : Prop :=
   (In p.(s0) p.(S))
   /\ (incl p.(T) p.(S)).
-  (*/\ forall e: RatExpr, In e P -> incl (vars e) X *)
+  (*/\ forall e: RatExpr, In e P -> incl (vars e) X. *)
 
 Variable eval_pmc : PMC -> Evaluation Var -> DTMC.
 
@@ -102,6 +135,7 @@ Variable eval_pmc : PMC -> Evaluation Var -> DTMC.
 Variable alpha_v : PMC -> RatExpr.
 
 Definition well_defined_evaluation (p: PMC) (u: Evaluation Var) : Prop := wf_DTMC (eval_pmc p u).
+
 (** Hahn's lemma *)
 Lemma parametric_reachability_soundness:
  forall (p: PMC) (u: Evaluation Var),
