@@ -71,6 +71,12 @@ Inductive RatExpr : Type :=
 
 Hypothesis Expr_eq_dec : forall x y: RatExpr, {x = y} + {x <> y}.
 
+Definition const (e: RatExpr): Prop :=
+match e with
+  | Const p => True
+  | _ => False
+end.
+
 Definition expr_sum (e1 e2: RatExpr): RatExpr :=
 match e1, e2 with
   | Const r1, Const r2 => Const (r1 + r2)
@@ -144,7 +150,7 @@ Definition bimap {T: Type} (s s': State) (m: TransitionMatrix T): option T :=
 Notation "m [ s , s' ]" := (bimap s s' m) (at level 0).
 
 Definition is_stochastic_row (r: StateMaps.t R) : Prop :=
-    (forall s: State, StateMaps.In s r -> opt_is_valid_prob (StateMaps.find s r) )
+    (forall (s: State) (v: R), StateMaps.MapsTo s v r -> is_valid_prob v)
     /\ sum_in_map r = 1.
 
 Definition opt_is_stochastic_row (o: option (StateMaps.t R)) : Prop :=
@@ -154,14 +160,15 @@ match o with
 end.
 
 Definition is_stochastic_matrix (m: TransitionMatrix R) : Prop :=
-    forall s: State,
-       StateMaps.In s m -> option_map is_stochastic_row (StateMaps.find s m) = Some True.
+    forall s: State, forall r: StateMaps.t R,
+        StateMaps.MapsTo s r m -> is_stochastic_row r.
 
 (** Well-formed DTMC *)
 
 Definition wf_DTMC (d: DTMC) : Prop :=
   (In d.(s0) d.(S))
   /\ (incl d.(T) d.(S))
+  /\ (forall s: State, In s d.(S) <-> StateMaps.In s d.(P))
   /\ (is_stochastic_matrix d.(P)).
 
 End NonParametric.
@@ -198,7 +205,7 @@ Record PMC : Type := { S:  set State;
 Definition wf_PMC (p: PMC) : Prop :=
   (In p.(s0) p.(S))
   /\ (incl p.(T) p.(S))
-  /\ (forall s: State, In s p.(S) -> StateMaps.In s p.(P)).
+  /\ (forall s: State, In s p.(S) <-> StateMaps.In s p.(P)).
   (*/\ forall e: RatExpr, In e P -> incl (vars e) X. *)
 
 
@@ -257,26 +264,20 @@ Qed.
 
 Definition expr_sum_in_map (m: StateMaps.t RatExpr) : RatExpr := sum_f_in_map m expr_sum (Const 0).
 
+Lemma eval_sum_in_map:
+    forall (m: StateMaps.t RatExpr) (u: Evaluation),
+        eval_expr (expr_sum_in_map m) u = sum_in_map (eval_row m u).
+Admitted.
+
 
 Definition expr_is_stochastic_row (r: StateMaps.t RatExpr) : Prop :=
-    expr_sum_in_map r = Const 1.
-
-Definition opt_expr_is_stochastic_row (o: option (StateMaps.t RatExpr)) : Prop :=
-match o with
-    | Some row => expr_is_stochastic_row row
-    | None => False
-end.
-
-Definition expr_is_stochastic_matrix (m: TransitionMatrix RatExpr) : Prop :=
-    forall s: State, StateMaps.In s m -> option_map expr_is_stochastic_row (StateMaps.find s m) = Some True.
-
-Lemma eval_stochastic: forall (m: TransitionMatrix RatExpr) (u: Evaluation),
-    expr_is_stochastic_matrix m -> is_stochastic_matrix (eval_matrix m u).
-Admitted.
+    (forall (s: State) (e: RatExpr), StateMaps.MapsTo s e r -> const e)
+    /\ expr_sum_in_map r = Const 1.
 
 Lemma eval_stochastic_row: forall (r: StateMaps.t RatExpr) (u: Evaluation),
     expr_is_stochastic_row r -> is_stochastic_row (eval_row r u).
 Admitted.
+
 
 Definition opt_In {T: Type} (s: State) (m: option (StateMaps.t T)): Prop :=
 match m with
@@ -285,15 +286,29 @@ match m with
 end.
 
 
+Lemma in_mapsto {T: Type} : forall (r: StateMaps.t T) (s: State),
+    StateMaps.In s r <-> exists v: T, StateMaps.MapsTo s v r.
+Proof.
+    intros. split.
+    - auto.
+    - auto.
+Qed.
+
+Lemma mapsto_in {T: Type} : forall (r: StateMaps.t T) (s: State),
+    forall v: T, StateMaps.MapsTo s v r -> StateMaps.In s r.
+Proof.
+    intros. rewrite in_mapsto. exists v. apply H.
+Qed.
+
+
 Definition annotative_state (m: TransitionMatrix RatExpr) (s: State): Prop :=
-  exists r: StateMaps.t RatExpr,
-  StateMaps.MapsTo s r m /\
+  forall r: StateMaps.t RatExpr, StateMaps.MapsTo s r m ->
   (expr_is_stochastic_row r
   \/
   (exists s1 s2: State, exists x: Var,
                 s1 <> s2
-                /\ StateMaps.In s1 r
-                /\ StateMaps.In s2 r
+                (*/\ StateMaps.In s1 r
+                /\ StateMaps.In s2 r*)
                 /\ StateMaps.MapsTo s1 (OneVar x) r
                 /\ StateMaps.MapsTo s2 (Sub (Const 1) (OneVar x)) r
                 /\ forall s': State,
@@ -317,6 +332,37 @@ Proof.
     unfold option_map. reflexivity.
 Qed.
 
+
+Lemma eval_matrix_in:
+    forall (m: TransitionMatrix RatExpr) (s: State) (u: Evaluation),
+        StateMaps.In s m <-> StateMaps.In s (eval_matrix m u).
+Proof.
+    intros. unfold eval_matrix.
+    split.
+    - (* -> *)
+      intros.
+      rewrite in_mapsto in H. elim H. intros.
+      rewrite in_mapsto. exists (eval_row x u).
+      apply StateMaps.map_1 with (f:=(fun r : StateMaps.t RatExpr => eval_row r u)).
+      apply H0.
+    - (* <- *)
+      intros. apply StateMaps.map_2 in H. apply H.
+Qed.
+
+Lemma eval_matrix_mapsto:
+    forall (m: TransitionMatrix RatExpr) (s: State) (r: StateMaps.t RatExpr) (u: Evaluation),
+        StateMaps.MapsTo s r m -> StateMaps.MapsTo s (eval_row r u) (eval_matrix m u).
+Proof.
+    intros m s r u. unfold eval_matrix. apply StateMaps.map_1.
+Qed.
+
+Lemma eval_matrix_evaluated_expr:
+    forall (m: TransitionMatrix RatExpr) (s: State) (r: StateMaps.t R) (u: Evaluation),
+        StateMaps.MapsTo s r (eval_matrix m u)
+        -> (exists e: StateMaps.t RatExpr, StateMaps.MapsTo s e m /\ r = eval_row e u).
+Proof.
+Admitted.
+
 Lemma sum_in_list: forall (l: list RatExpr) (e: RatExpr) (a0: RatExpr),
     In e l -> fold_left expr_sum l a0 = expr_sum e (fold_left expr_sum (remove Expr_eq_dec e l) a0).
 Admitted.
@@ -330,48 +376,40 @@ Lemma sum_zero_in_map: forall (r: StateMaps.t RatExpr),
     (forall s: State, StateMaps.MapsTo s (Const 0) r) -> expr_sum_in_map r = Const 0.
 Admitted.
 
-Lemma in_mapsto {T: Type} : forall (r: StateMaps.t T) (s: State),
-    StateMaps.In s r -> exists v: T, StateMaps.MapsTo s v r.
+
+Definition stochastic_evaluation (u: Evaluation): Prop :=
+    forall x: Var, is_valid_prob (u x).
+
+Lemma eval_annotative_state_is_stochastic:
+    forall (m: TransitionMatrix RatExpr) (s: State) (r: StateMaps.t RatExpr) (u: Evaluation),
+        StateMaps.MapsTo s r m -> annotative_state m s -> stochastic_evaluation u -> is_stochastic_row (eval_row r u).
 Proof.
-    auto.
-Qed.
+    intros m s r u H_s_mapsto_m H_s_annot H_u_stochastic.
+    unfold annotative_state in H_s_annot. apply H_s_annot in H_s_mapsto_m.
+    destruct H_s_mapsto_m.
+    - (* all transitions are constant values *)
+      apply eval_stochastic_row. apply H.
+    - (* transitions are x and 1-x *)
+      destruct H as [s1 [s2 [x [Hs1_s2 [Hx [Hx_compl H]]]]]].
+      clear H_s_annot.
+      unfold is_stochastic_row. split.
+      + (* expressions evaluate to valid probabilities *)
+        intros s' v H_s'_value.
+        (* TODO: Finish this part *)
+        admit.
+      + (* sum of row is 1 *)
+        rewrite <- eval_sum_in_map.
 
 
-Lemma eval_annotative_state_is_stochastic: forall (m: TransitionMatrix RatExpr) (s: State) (u: Evaluation),
-    StateMaps.In s m -> annotative_state m s -> opt_is_stochastic_row (StateMaps.find s (eval_matrix m u)).
-Proof.
-    intros m s u H_s_in_m H_s_annot.
-    rewrite commutative_eval_find.
-    Focus 2. apply H_s_in_m.
-    inversion H_s_in_m as [e H_mapsto].
-    apply StateMaps.find_1 in H_mapsto. rewrite -> H_mapsto.
-    unfold option_map. unfold opt_is_stochastic_row.
-    apply eval_stochastic_row.
-    destruct H_s_annot as [x H]. destruct H as [H_s_mapsto' H_s_annot].
-    assert (x=e) as H_x_e.
-    { apply StateMaps.find_1 in H_s_mapsto'. rewrite H_mapsto in H_s_mapsto'.
-      inversion H_s_mapsto'. reflexivity. }
-    rewrite H_x_e in H_s_annot. rewrite H_x_e in H_s_mapsto'. clear H_x_e. clear x.
-    destruct H_s_annot.
-    - (*stochastic_const*)
-        apply H.
-    - (*var_complement*)
-        destruct H as [s1 [s2 [x [Hs1_s2 [Hs1 [Hs2 [Hx [Hx_compl H]]]]]]]].
-        unfold expr_is_stochastic_row.
         rewrite sum_in_map with (s:=s1) (e:=OneVar x).
         Focus 2. apply Hx.
         rewrite sum_in_map with (s:=s2) (e:=Sub (Const 1) (OneVar x)).
         Focus 2. apply StateMaps.remove_2 with (x:=s1) in Hx_compl.
         Focus 2. apply Hs1_s2.
         apply Hx_compl.
-        remember (StateMaps.remove s2 (StateMaps.remove s1 e)) as rest.
-        apply sum_zero_in_map in H. rewrite H. simpl.
-        rewrite expr_0_identity. rewrite expr_sub_minus.
-        rewrite expr_sum_associative. rewrite expr_sum_commutative.
-        rewrite expr_sum_associative.
-        remember (Sum (Minus (OneVar x)) (OneVar x)) as x'.
-        rewrite expr_sum_commutative in Heqx'. rewrite expr_sum_cancelation in Heqx'.
-        rewrite Heqx'. rewrite expr_sum_commutative. rewrite expr_0_identity. reflexivity.
+        remember (StateMaps.remove s2 (StateMaps.remove s1 r)) as rest.
+        apply sum_zero_in_map in H. rewrite H. simpl. remember (u x) as a.
+        rewrite Rplus_0_r. rewrite Rplus_minus. reflexivity.
 Qed.
 
 End Parametric.
@@ -396,12 +434,13 @@ Definition wf_annot_prob_model (apm: AnnotativeProbModel) : Prop :=
     Parametric.wf_PMC apm.(pmc)
     /\ Parametric.annotative_pmc apm.(pmc)
     /\ ( forall (c: SPL.Configuration) (x: Var),
-           (In c [| apm.(FM) |]) /\ (In x apm.(pmc).(Parametric.X))
+           (In c [| apm.(FM) |]) -> (In x apm.(pmc).(Parametric.X))
            ->  apm.(w) = AnnotativeEvaluationFactory apm.(pf) ).
 
 (** Definition 7 (DTMC derivation) *)
 Definition lambda (p: Parametric.PMC) (w: EvaluationFactory) (c: SPL.Configuration) : DTMC :=
     Parametric.eval_pmc p (w c).
+
 
 (** Lemma 2 (Evaluation well-definedness for annotative models) *)
 Lemma lemma_2:
@@ -415,23 +454,47 @@ Proof.
     remember (Parametric.eval_pmc (pmc apm) (w apm c)) as d.
     unfold wf_DTMC.
     intuition. (* Break each proposition in the conjunction into a separate goal. *)
-    - (*s0 in S*)
+    - (* s0 in S *)
       rewrite -> Heqd. simpl. apply Hs0.
-    - (*T in S*)
+    - (* T in S *)
       rewrite -> Heqd. simpl. apply HTinS.
-    - (*all transitions are valid probabilities*)
-      unfold Parametric.annotative_pmc in HannotPMC.
-      assert (forall s : State,
-                 In s (Parametric.S (pmc apm))
-                 <-> In s (S d)) as S_unchanged.
-      { rewrite -> Heqd. simpl. tauto. }
-      unfold is_stochastic_matrix.
-        intros. apply Parametric.eval_stochastic_row.
-        unfold opt_is_valid_prob. destruct (bimap s s' (P d)).
-
-      apply H1 in HannotPMC.
-      destruct HannotPMC with (s:=s).
-      induction (bimap s s' (P d)). unfold opt_is_valid_prob.
+    - (* StateMaps.In s (P d) *)
+      rewrite Heqd in H. unfold Parametric.eval_pmc in H. unfold S in H.
+      rewrite Heqd. unfold Parametric.eval_pmc. unfold P.
+      apply HSinP in H. apply Parametric.eval_matrix_in. apply H.
+    - (* In s (S d) *)
+      rewrite Heqd in H. unfold Parametric.eval_pmc in H. unfold P in H.
+      rewrite Heqd. unfold Parametric.eval_pmc. unfold S.
+      apply HSinP. apply Parametric.eval_matrix_in in H. apply H.
+    - (* all transitions are valid probabilities *)
+      unfold is_stochastic_matrix. intros s r H_mapsto.
+      rewrite Heqd in H_mapsto. unfold Parametric.eval_pmc in H_mapsto. unfold P in H_mapsto.
+      apply Parametric.eval_matrix_evaluated_expr in H_mapsto. elim H_mapsto.
+      intros e [H_mapsto_e H_r]. rewrite H_r.
+      apply Parametric.eval_annotative_state_is_stochastic with (m:=Parametric.P (pmc apm)) (s:=s).
+      + (* MapsTo s e (P apm) ? *)
+        assumption.
+      + (* annotative_state ? *)
+        unfold Parametric.annotative_pmc in HannotPMC.
+        apply Parametric.mapsto_in in H_mapsto_e.
+        rewrite <- HSinP in H_mapsto_e. apply HannotPMC in H_mapsto_e.
+        assumption.
+      + (* w is a stochastic evaluation? *)
+        unfold Parametric.stochastic_evaluation. intros.
+        apply HannotEvalFactory with (x:=x) in H0.
+        { (* is valid probability? *)
+          rewrite H0.
+          unfold AnnotativeEvaluationFactory.
+          induction (pf apm x c).
+          - unfold is_valid_prob. split.
+              + apply Rle_0_1.
+              + apply Rle_refl.
+          - unfold is_valid_prob. split.
+              + apply Rle_refl.
+              + apply Rle_0_1.
+        }
+        { (* is x in X? *)
+          assumption. }
 Qed.
 
 End Rome.
