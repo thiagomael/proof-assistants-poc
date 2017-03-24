@@ -188,6 +188,8 @@ Admitted.
 
 Definition pr (d: DTMC) (s t: State): R := pr_set d s (set_add State_eq_dec t (empty_set State)).
 
+Parameter var_set: TransitionMatrix RatExpr -> set Var.
+
 
 (** ** PMC *)
 
@@ -205,8 +207,8 @@ Record PMC : Type := { S:  set State;
 Definition wf_PMC (p: PMC) : Prop :=
   (In p.(s0) p.(S))
   /\ (incl p.(T) p.(S))
-  /\ (forall s: State, In s p.(S) <-> StateMaps.In s p.(P)).
-  (*/\ forall e: RatExpr, In e P -> incl (vars e) X. *)
+  /\ (forall s: State, In s p.(S) <-> StateMaps.In s p.(P))
+  /\ (p.(X) = var_set p.(P)).
 
 
 Definition eval_row (r: StateMaps.t RatExpr) (u: Evaluation) : StateMaps.t R :=
@@ -377,12 +379,15 @@ Lemma sum_zero_in_map: forall (r: StateMaps.t RatExpr),
 Admitted.
 
 
-Definition stochastic_evaluation (u: Evaluation): Prop :=
-    forall x: Var, is_valid_prob (u x).
+Definition stochastic_evaluation (u: Evaluation) (X: set Var): Prop :=
+    forall x: Var, In x X -> is_valid_prob (u x).
 
 Lemma eval_annotative_state_is_stochastic:
     forall (m: TransitionMatrix RatExpr) (s: State) (r: StateMaps.t RatExpr) (u: Evaluation),
-        StateMaps.MapsTo s r m -> annotative_state m s -> stochastic_evaluation u -> is_stochastic_row (eval_row r u).
+        StateMaps.MapsTo s r m ->
+        annotative_state m s ->
+        stochastic_evaluation u (var_set m)
+        -> is_stochastic_row (eval_row r u).
 Proof.
     intros m s r u H_s_mapsto_m H_s_annot H_u_stochastic.
     unfold annotative_state in H_s_annot. apply H_s_annot in H_s_mapsto_m.
@@ -399,8 +404,6 @@ Proof.
         admit.
       + (* sum of row is 1 *)
         rewrite <- eval_sum_in_map.
-
-
         rewrite sum_in_map with (s:=s1) (e:=OneVar x).
         Focus 2. apply Hx.
         rewrite sum_in_map with (s:=s2) (e:=Sub (Const 1) (OneVar x)).
@@ -449,7 +452,7 @@ Lemma lemma_2:
             In c [|apm.(FM)|] -> Parametric.well_defined_evaluation apm.(pmc) (apm.(w) c).
 Proof.
     intros.
-    destruct H as [[Hs0 [HTinS HSinP]] [HannotPMC HannotEvalFactory]].
+    destruct H as [[Hs0 [HTinS [HSinP HXinP]]] [HannotPMC HannotEvalFactory]].
     unfold Parametric.well_defined_evaluation.
     remember (Parametric.eval_pmc (pmc apm) (w apm c)) as d.
     unfold wf_DTMC.
@@ -494,7 +497,7 @@ Proof.
               + apply Rle_0_1.
         }
         { (* is x in X? *)
-          assumption. }
+          rewrite HXinP. assumption. }
 Qed.
 
 End Rome.
