@@ -1,6 +1,12 @@
 Require Import Reals.
 Require Import ListSet.
 Require Import List.
+Require Import Coq.FSets.FMapWeakList.
+Require Import Coq.FSets.FMapFacts.
+
+Require Import Coq.Classes.RelationClasses.
+
+Load fm.
 
 Module Rome.
 
@@ -14,7 +20,6 @@ match o with
   | None   => False
 end.
 
-Require Import Coq.FSets.FMapWeakList.
 
 (** * Transition Matrix *)
 
@@ -41,6 +46,7 @@ End DecidableState.
 
 
 Module StateMaps := FMapWeakList.Make DecidableState.
+Module StateMapsFacts := WFacts_fun DecidableState StateMaps.
 
 Definition TransitionMatrix (t: Type) := StateMaps.t (StateMaps.t t).
 
@@ -178,18 +184,51 @@ End NonParametric.
 
 Variable pr_set: DTMC -> State -> set State -> R.
 
-Lemma wf_dtmc_yields_valid_probability:
+Hypothesis wf_dtmc_yields_valid_probability:
   forall (d: DTMC) (s: State) (Tgt: set State),
     (wf_DTMC d /\ In s d.(S) /\ incl Tgt d.(T)) -> is_valid_prob (pr_set d s Tgt).
-Admitted.
 
 
 (** Probability of going from a given state to another within a DTMC. *)
 
 Definition pr (d: DTMC) (s t: State): R := pr_set d s (set_add State_eq_dec t (empty_set State)).
 
-Parameter var_set: TransitionMatrix RatExpr -> set Var.
+Fixpoint var_set_list' (l: list (State * RatExpr)): set Var :=
+match l with
+  | nil       => empty_set Var
+  | e :: rest => set_union Var_eq_dec (vars (snd e)) (var_set_list' rest)
+end.
 
+Definition var_set' (r: StateMaps.t RatExpr): set Var :=
+    var_set_list' (StateMaps.elements r).
+
+Fixpoint var_set_list (l: list (State * StateMaps.t RatExpr)): set Var :=
+match l with
+  | nil       => empty_set Var
+  | e :: rest => set_union Var_eq_dec (var_set' (snd e)) (var_set_list rest)
+end.
+
+Definition var_set (m: TransitionMatrix RatExpr): set Var :=
+    var_set_list (StateMaps.elements m).
+
+Lemma vars_injection: forall (m: TransitionMatrix RatExpr) (r: StateMaps.t RatExpr) (s: State) (x: Var),
+    StateMaps.MapsTo s r m -> In x (var_set' r) -> In x (var_set m).
+Proof.
+    intros m r s x H_mapsto H_x_in_r.
+    unfold var_set.
+    apply StateMaps.elements_1 in H_mapsto.
+    elim H_mapsto.
+    - (* r is the first element *)
+      intros.
+      red in H. red in H. destruct H as [H_fst H_snd].
+      unfold var_set_list.
+      rewrite <- H_snd. simpl.
+      apply set_union_intro1. assumption.
+    - (* r is in the tail of elements list *)
+      intros.
+      unfold var_set_list.
+      apply set_union_intro2. assumption.
+Qed.
 
 (** ** PMC *)
 
@@ -230,19 +269,17 @@ Variable alpha_v : PMC -> RatExpr.
 (** Definition: an evaluation is well-defined iff the evaluated PMC is a well-formed DTMC. *)
 Definition well_defined_evaluation (p: PMC) (u: Evaluation) : Prop := wf_DTMC (eval_pmc p u).
 
-(** Hahn's lemma: *)
 
-Lemma parametric_reachability_soundness:
+(** Lemma 1 (Hahn's lemma) *)
+Hypothesis parametric_reachability_soundness:
  forall (p: PMC) (u: Evaluation),
     (well_defined_evaluation p u /\ wf_PMC p)
     -> (pr_set (eval_pmc p u) p.(s0) p.(T)) = eval_expr (alpha_v p) u.
-Proof.
-Admitted.
+
 
 Definition expr_is_valid_prob (r: RatExpr): Prop :=
 match r with
   | Const p => is_valid_prob p
-  (*| Mul a b => expr_is_valid_prob a /\ expr_is_valid_prob b*)
   | _ => False
 end.
 
@@ -262,6 +299,24 @@ Proof.
     - inversion H.
     - inversion H.
     - inversion H.
+Qed.
+
+Lemma valid_prob_1_minus_p: forall p: R, is_valid_prob p -> is_valid_prob (1 - p).
+Proof.
+    intros p H.
+    unfold is_valid_prob in H. elim H.
+    intros H_ux_gte0 H_ux_lte1.
+    unfold is_valid_prob. split.
+    - apply Rge_le. apply Rle_minus in H_ux_lte1.
+      apply Ropp_le_ge_contravar in H_ux_lte1.
+      rewrite Ropp_0 in H_ux_lte1.
+      rewrite <- Ropp_minus_distr in H_ux_lte1.
+      rewrite Ropp_involutive in H_ux_lte1.
+      assumption.
+    - apply Ropp_le_contravar in H_ux_gte0.
+      apply Rplus_le_compat_l with (r:=1) in H_ux_gte0.
+      rewrite Ropp_0 in H_ux_gte0. rewrite Rplus_0_r in H_ux_gte0.
+      apply H_ux_gte0.
 Qed.
 
 Definition expr_sum_in_map (m: StateMaps.t RatExpr) : RatExpr := sum_f_in_map m expr_sum (Const 0).
@@ -304,18 +359,15 @@ Qed.
 
 
 Definition annotative_state (m: TransitionMatrix RatExpr) (s: State): Prop :=
-  forall r: StateMaps.t RatExpr, StateMaps.MapsTo s r m ->
-  (expr_is_stochastic_row r
-  \/
-  (exists s1 s2: State, exists x: Var,
-                s1 <> s2
-                (*/\ StateMaps.In s1 r
-                /\ StateMaps.In s2 r*)
-                /\ StateMaps.MapsTo s1 (OneVar x) r
-                /\ StateMaps.MapsTo s2 (Sub (Const 1) (OneVar x)) r
-                /\ forall s': State,
-                    (*(StateMaps.In s' r /\ s' <> s1 /\ s' <> s2) -> StateMaps.MapsTo s' (Const 0) r)).*)
-                    StateMaps.MapsTo s' (Const 0) (StateMaps.remove s2 (StateMaps.remove s1 r)) )).
+    forall r: StateMaps.t RatExpr, StateMaps.MapsTo s r m ->
+        (expr_is_stochastic_row r
+        \/
+        (exists s1 s2: State, exists x: Var,
+            s1 <> s2
+            /\ StateMaps.MapsTo s1 (OneVar x) r
+            /\ StateMaps.MapsTo s2 (Sub (Const 1) (OneVar x)) r
+            /\ forall s': State,
+                StateMaps.MapsTo s' (Const 0) (StateMaps.remove s2 (StateMaps.remove s1 r)) )).
 
 
 Definition annotative_pmc (p: PMC) : Prop :=
@@ -334,6 +386,10 @@ Proof.
     unfold option_map. reflexivity.
 Qed.
 
+Lemma commutative_eval_mapsto: forall (r: StateMaps.t RatExpr) (s: State) (u: Evaluation) (v: R),
+    StateMaps.MapsTo s v (eval_row r u) ->
+        exists e: RatExpr, StateMaps.MapsTo s e r /\ v = eval_expr e u.
+Admitted.
 
 Lemma eval_matrix_in:
     forall (m: TransitionMatrix RatExpr) (s: State) (u: Evaluation),
@@ -390,7 +446,9 @@ Lemma eval_annotative_state_is_stochastic:
         -> is_stochastic_row (eval_row r u).
 Proof.
     intros m s r u H_s_mapsto_m H_s_annot H_u_stochastic.
-    unfold annotative_state in H_s_annot. apply H_s_annot in H_s_mapsto_m.
+    unfold annotative_state in H_s_annot.
+    assert (H_s_mapsto_m':= H_s_mapsto_m).
+    apply H_s_annot in H_s_mapsto_m.
     destruct H_s_mapsto_m.
     - (* all transitions are constant values *)
       apply eval_stochastic_row. apply H.
@@ -400,8 +458,60 @@ Proof.
       unfold is_stochastic_row. split.
       + (* expressions evaluate to valid probabilities *)
         intros s' v H_s'_value.
-        (* TODO: Finish this part *)
-        admit.
+        unfold stochastic_evaluation in H_u_stochastic.
+        assert (H_x_in_r: In x (var_set' r)).
+        { unfold var_set'.
+          apply StateMaps.elements_1 in Hx. elim Hx.
+          - (* x is in the first element. *)
+            intros.
+            unfold var_set_list'.
+            repeat red in H0. destruct H0 as [H_fst H_snd].
+            rewrite <- H_snd. simpl.
+            apply set_union_intro1. simpl. left. reflexivity.
+          - (* x is somewhere in the remaining elements. *)
+            intros.
+            unfold var_set_list'.
+            apply set_union_intro2. assumption.
+        }
+        apply vars_injection with (m:=m) (s:=s) in H_x_in_r.
+          Focus 2. assumption.
+        apply H_u_stochastic in H_x_in_r.
+        apply commutative_eval_mapsto in H_s'_value.
+        elim H_s'_value. intros e [H_s'_mapsto_e H_v_eval_e].
+        { (* Let us perform case analysis of s': *)
+          destruct (State_eq_dec s1 s').
+          - (* s' == s1 *)
+            apply StateMaps.MapsTo_1 with (x:=s1) (y:=s') in Hx.
+              Focus 2. auto.
+            apply StateMapsFacts.MapsTo_fun with (e:=OneVar x) in H_s'_mapsto_e.
+              Focus 2. assumption.
+            rewrite H_v_eval_e.
+            rewrite <- H_s'_mapsto_e.
+            simpl. assumption.
+          - (* s' <> s1 *)
+            destruct (State_eq_dec s2 s').
+            + (* s' == s2 *)
+              apply StateMaps.MapsTo_1 with (x:=s2) (y:=s') in Hx_compl.
+                Focus 2. auto.
+              apply StateMapsFacts.MapsTo_fun with (e:=(Sub (Const 1) (OneVar x))) in H_s'_mapsto_e.
+                Focus 2. assumption.
+              rewrite H_v_eval_e.
+              rewrite <- H_s'_mapsto_e.
+              simpl.
+              apply valid_prob_1_minus_p. assumption.
+            + (* s' <> s2 *)
+              apply StateMaps.remove_2 with (x:=s1) in H_s'_mapsto_e.
+                Focus 2. assumption.
+              apply StateMaps.remove_2 with (x:=s2) in H_s'_mapsto_e.
+                Focus 2. assumption.
+              apply StateMapsFacts.MapsTo_fun with (e:=Const 0) in H_s'_mapsto_e.
+                Focus 2. apply H.
+              rewrite H_v_eval_e.
+              rewrite <- H_s'_mapsto_e. simpl.
+              unfold is_valid_prob. split.
+              * apply Rle_refl.
+              * apply Rle_0_1.
+        }
       + (* sum of row is 1 *)
         rewrite <- eval_sum_in_map.
         rewrite sum_in_map with (s:=s1) (e:=OneVar x).
@@ -417,7 +527,6 @@ Qed.
 
 End Parametric.
 
-Load fm.
 
 Definition PresenceFunction : Type := Var -> SPL.Configuration -> bool.
 
@@ -497,7 +606,8 @@ Proof.
               + apply Rle_0_1.
         }
         { (* is x in X? *)
-          rewrite HXinP. assumption. }
+          rewrite HXinP. assumption.
+        }
 Qed.
 
 End Rome.

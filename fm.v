@@ -1,12 +1,12 @@
-Module SPL.
-
 Require Import ListSet.
 
-Parameter FM: Set.
-Parameter Configuration: Set.
+Module SPL.
 
-Variable fm_semantics: FM -> set Configuration.
+  Parameter FM: Set.
+  Parameter Configuration: Set.
 
-Notation "[| fm |]" := (fm_semantics fm) :SPL_scope.
+  Variable fm_semantics: FM -> set Configuration.
+
+  Notation "[| fm |]" := (fm_semantics fm) :SPL_scope.
 
 End SPL.
