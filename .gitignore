@@ -1,0 +1,13 @@
+*.aux
+*.bkp
+*.d
+*.glob
+*.vo
+
+*.crashcoqide
+
+*.bkp
+*.css
+*.html
+*.pdf
+\#*\#
