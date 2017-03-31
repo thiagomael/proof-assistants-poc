@@ -134,6 +134,14 @@ Fixpoint vars (e: RatExpr) : set Var :=
   | Div a b  => set_union Var_eq_dec (vars a) (vars b)
   end.
 
+Lemma eval_distributive_sum:
+    forall (a b: RatExpr) (u: Evaluation),
+        eval_expr (expr_sum a b) u = eval_expr a u + eval_expr b u.
+Proof.
+    intros.
+    destruct a; destruct b; simpl; reflexivity.
+Qed.
+
 (** * Markov Chains *)
 (** ** DTMC *)
 
@@ -319,12 +327,36 @@ Proof.
       apply H_ux_gte0.
 Qed.
 
-Definition expr_sum_in_map (m: StateMaps.t RatExpr) : RatExpr := sum_f_in_map m expr_sum (Const 0).
+Definition expr_sum_in_map (m: StateMaps.t RatExpr) : RatExpr :=
+    sum_f_in_map m expr_sum (Const 0).
+
+Lemma commutative_eval_elements:
+  forall (m: StateMaps.t RatExpr) (u: Evaluation),
+      let eval_snd := (fun p => (fst p, eval_expr (snd p) u)) in
+      StateMaps.elements (eval_row m u) = map eval_snd (StateMaps.elements m).
+Proof.
+    intros.
+    unfold eval_row. unfold StateMaps.elements. unfold StateMaps.Raw.elements.
+    unfold StateMaps.map. simpl.
+    induction StateMaps.this.
+    - reflexivity.
+    - simpl. rewrite IHt.
+      destruct a as [k v]. reflexivity.
+Qed.
 
 Lemma eval_sum_in_map:
     forall (m: StateMaps.t RatExpr) (u: Evaluation),
         eval_expr (expr_sum_in_map m) u = sum_in_map (eval_row m u).
-Admitted.
+Proof.
+    intros.
+    unfold expr_sum_in_map.
+    unfold sum_in_map. unfold sum_f_in_map.
+    unfold sum_f.
+    rewrite commutative_eval_elements.
+    induction (StateMaps.elements (elt:=RatExpr) m).
+    - reflexivity.
+    - admit.
+Qed.
 
 
 Definition expr_is_stochastic_row (r: StateMaps.t RatExpr) : Prop :=
