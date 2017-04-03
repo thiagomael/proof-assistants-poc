@@ -90,9 +90,15 @@ Proof.
     unfold sum_f.
     rewrite commutative_eval_elements.
     induction (StateMaps.elements (elt:=RatExpr) m).
-    - reflexivity.
-    - admit.
-Admitted.
+    - (* nil *)
+      reflexivity.
+    - (* a:: l *)
+      rewrite map_cons.
+      unfold fold_right. simpl.
+      rewrite distributive_eval_sum.
+      unfold fold_right in IHl.
+      rewrite IHl. reflexivity.
+Qed.
 
 Lemma commutative_eval_find:
     forall (m: TransitionMatrix RatExpr) (s: State) (u: Evaluation),

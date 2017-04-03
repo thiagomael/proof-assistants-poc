@@ -13,7 +13,7 @@ Module StateMapsFacts := WFacts_fun DecidableState StateMaps.
 Definition TransitionMatrix (t: Type) := StateMaps.t (StateMaps.t t).
 
 Definition sum_f {S T: Type} (l: list (prod S T)) (f: T -> T -> T) (t0: T) : T :=
-    fold_left (fun (t: T) ( e: prod S T ) => f t (snd e) ) l t0.
+    fold_right (fun ( e: prod S T ) (t: T) => f t (snd e) ) t0 l.
 
 Definition sum_f_in_map {T: Type} (m: StateMaps.t T) (f: T -> T -> T) (t0: T) : T :=
     sum_f (StateMaps.elements m) f t0.
