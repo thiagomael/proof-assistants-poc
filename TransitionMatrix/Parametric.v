@@ -170,10 +170,25 @@ Admitted.
 
 (** ** Evaluation and stochasticity **)
 Definition expr_is_stochastic_row (r: StateMaps.t RatExpr) : Prop :=
-    (forall (s: State) (e: RatExpr), StateMaps.MapsTo s e r -> const e)
+    (forall (s: State) (e: RatExpr), StateMaps.MapsTo s e r -> expr_is_valid_prob e)
     /\ expr_sum_in_map r = Const 1.
 
 Lemma eval_stochastic_row:
     forall (r: StateMaps.t RatExpr) (u: Evaluation),
         expr_is_stochastic_row r -> is_stochastic_row (eval_row r u).
-Admitted.
+Proof.
+    intros.
+    unfold expr_is_stochastic_row in H.
+    destruct H as [H_valid_prob H_sum_1].
+    unfold is_stochastic_row. split.
+    - (* all values are valid probabilities *)
+      intros.
+      apply commutative_eval_mapsto in H.
+      inversion H as [e [H_s_mapsto_e H_v_eval_e]].
+      apply H_valid_prob in H_s_mapsto_e.
+      rewrite H_v_eval_e.
+      apply valid_prob_preservation. assumption.
+    - (* sum is 1 *)
+      rewrite <- eval_sum_in_map.
+      rewrite H_sum_1. reflexivity.
+Qed.
