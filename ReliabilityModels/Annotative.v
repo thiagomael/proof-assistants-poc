@@ -26,7 +26,8 @@ Definition annotative_state (m: TransitionMatrix RatExpr) (s: State): Prop :=
             /\ StateMaps.MapsTo s1 (OneVar x) r
             /\ StateMaps.MapsTo s2 (Sub (Const 1) (OneVar x)) r
             /\ forall s': State,
-                StateMaps.MapsTo s' (Const 0) (StateMaps.remove s2 (StateMaps.remove s1 r)) )).
+                StateMaps.In s' (StateMaps.remove s2 (StateMaps.remove s1 r)) ->
+                  StateMaps.MapsTo s' (Const 0) (StateMaps.remove s2 (StateMaps.remove s1 r)) )).
 
 Definition annotative_pmc (p: PMC) : Prop :=
     forall s: State, In s p.(S) -> annotative_state p.(P) s.
@@ -99,7 +100,7 @@ Proof.
               apply StateMaps.remove_2 with (x:=s2) in H_s'_mapsto_e.
                 Focus 2. assumption.
               apply StateMapsFacts.MapsTo_fun with (e:=Const 0) in H_s'_mapsto_e.
-                Focus 2. apply H.
+                Focus 2. apply H. apply mapsto_in in H_s'_mapsto_e. assumption.
               rewrite H_v_eval_e.
               rewrite <- H_s'_mapsto_e. simpl.
               unfold is_valid_prob. split.
@@ -115,7 +116,8 @@ Proof.
         Focus 2. apply Hs1_s2.
         apply Hx_compl.
         remember (StateMaps.remove s2 (StateMaps.remove s1 r)) as rest.
-        apply sum_zero_in_map in H. rewrite H. simpl. remember (u x) as a.
+        apply sum_zero_in_map in H.
+        rewrite H. simpl. remember (u x) as a.
         rewrite Rplus_0_r. rewrite Rplus_minus. reflexivity.
 Qed.
 

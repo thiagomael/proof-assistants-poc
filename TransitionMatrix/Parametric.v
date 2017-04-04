@@ -164,9 +164,45 @@ Admitted.
 
 Lemma sum_zero_in_map:
     forall (r: StateMaps.t RatExpr),
-        (forall s: State, StateMaps.MapsTo s (Const 0) r) ->
+        (forall s: State, StateMaps.In s r -> StateMaps.MapsTo s (Const 0) r) ->
             expr_sum_in_map r = Const 0.
-Admitted.
+Proof.
+    intros.
+    unfold expr_sum_in_map. unfold sum_f_in_map.
+    assert (H':
+        (forall s: State, StateMaps.In s r -> StateMaps.MapsTo s (Const 0) r ) ->
+          (forall p: State * RatExpr, (In p (StateMaps.elements r)) -> snd p = Const 0)).
+    {
+        intros.
+        specialize (H0 (fst p)).
+        apply SetoidList.In_InA with (eqA:=StateMaps.eq_key_elt (elt:=RatExpr)) in H1.
+        - destruct p as [s e].
+          apply StateMaps.elements_2 in H1. assert (H':= H1).
+          simpl in H0.
+          apply mapsto_in in H1. apply H0 in H1.
+          apply StateMapsFacts.MapsTo_fun with (e':=Const 0) (e:=e) in H1.
+          + auto.
+          + assumption.
+        - exact (StateMapsProperties.eqke_equiv RatExpr).
+    }
+    induction (StateMaps.elements (elt:=RatExpr) r).
+    - (* empty list *)
+      reflexivity.
+    - (* a::l *)
+      eapply H' in H.
+      + (* main goal *)
+        unfold sum_f. unfold fold_right.
+        unfold sum_f in IHl. unfold fold_right in IHl.
+        rewrite IHl.
+        * rewrite H. simpl. rewrite Rplus_0_r. reflexivity.
+        * intros.
+          { apply H' with (p:=p) in H0.
+            - assumption.
+            - apply in_cons. assumption.
+          }
+      + (* proof obligation *)
+        apply in_eq.
+Qed.
 
 (** ** Evaluation and stochasticity **)
 Definition expr_is_stochastic_row (r: StateMaps.t RatExpr) : Prop :=

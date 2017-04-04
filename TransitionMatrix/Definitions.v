@@ -9,6 +9,7 @@ Require Import State.
 
 Module StateMaps := FMapWeakList.Make DecidableState.
 Module StateMapsFacts := WFacts_fun DecidableState StateMaps.
+Module StateMapsProperties := WProperties_fun DecidableState StateMaps.
 
 Definition TransitionMatrix (t: Type) := StateMaps.t (StateMaps.t t).
 
