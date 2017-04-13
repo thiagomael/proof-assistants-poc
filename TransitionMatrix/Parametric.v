@@ -2,6 +2,7 @@
 Require Import ListSet.
 Require Import Reals.
 Require Import List.
+Require Import SetoidList.
 
 Require Import State.
 Require Import TransitionMatrix.Definitions.
@@ -157,10 +158,69 @@ Lemma sum_in_list: forall (l: list RatExpr) (e: RatExpr) (a0: RatExpr),
     In e l -> fold_left expr_sum l a0 = expr_sum e (fold_left expr_sum (remove RatExpr.eq_dec e l) a0).
 Admitted.
 
+
+Lemma sum_accumulator_commutative (T: Type):
+    forall (g: T -> RatExpr)
+           (x: RatExpr)
+           (l: list T),
+        let f := fun (v: T) (e: RatExpr) => expr_sum e (g v) in
+        fold_right f x l = expr_sum x (fold_right f (Const 0) l).
+Proof.
+    intros.
+    induction l.
+    - simpl. unfold expr_sum.
+      destruct x;
+          try rewrite Rplus_0_r;
+          try rewrite expr_0_identity;
+          reflexivity.
+    - simpl. rewrite IHl.
+      unfold f.
+      rewrite expr_sum_associative'.
+      trivial.
+Qed.
+
 Lemma sum_in_map: forall (r: StateMaps.t RatExpr) (s: State) (e: RatExpr),
     StateMaps.MapsTo s e r ->
     expr_sum_in_map r = expr_sum e (expr_sum_in_map (StateMaps.remove s r)).
-Admitted.
+Proof.
+    intros.
+  (* expose elements of r *)
+    unfold expr_sum_in_map. unfold sum_f_in_map.
+    unfold sum_f.
+  (* now we manipulate the list of elements to expose (s, e) *)
+    assert (H':=H). (* backup *)
+    apply StateMaps.elements_1 in H.
+    apply SetoidList.InA_split in H.
+    destruct H as [l1 [a [l2 [H_eq_a H_elem]]]].
+    rewrite H_elem.
+    rewrite remove_elements' with (e:=e) (l1:=l1) (l2:=l2) (a:=a); try assumption.
+  (* finally, let us leverage sums and folds commutative and
+     associative properties *)
+    rewrite fold_right_app.
+    unfold fold_right at 2.
+    rewrite expr_sum_commutative'.
+    rewrite sum_accumulator_commutative.
+    rewrite <- expr_sum_associative'.
+    replace
+        ((fix fold_right (l : list (StateMaps.key * RatExpr)) : RatExpr :=
+           match l with
+           | Datatypes.nil => Const 0
+           | b :: t => expr_sum (fold_right t) (snd b)
+           end) l2)
+      with
+        (fold_right
+          (fun (v : StateMaps.key * RatExpr) (e0 : RatExpr) =>
+           expr_sum e0 (snd v)) (Const 0) l2).
+      Focus 2. unfold fold_right. trivial.
+    rewrite <- sum_accumulator_commutative.
+    rewrite <- fold_right_app.
+  (* e = snd a *)
+    unfold StateMaps.eq_key_elt, StateMaps.Raw.PX.eqke in H_eq_a.
+    simpl in H_eq_a.
+    destruct H_eq_a as [_ H_e].
+    rewrite H_e.
+    trivial.
+Qed.
 
 Lemma sum_zero_in_map:
     forall (r: StateMaps.t RatExpr),

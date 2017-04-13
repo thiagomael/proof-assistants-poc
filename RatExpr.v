@@ -94,11 +94,38 @@ Proof.
     apply Rplus_comm.
 Qed.
 
+Theorem expr_sum_commutative':
+    forall a b: RatExpr, expr_sum a b = expr_sum b a.
+Proof.
+    intros.
+    destruct a; destruct b;
+        simpl;
+        try rewrite Rplus_comm;
+        try apply expr_sum_commutative;
+        try trivial.
+Qed.
+
 Theorem expr_sum_associative: forall a b c: RatExpr, Sum a (Sum b c) = Sum (Sum a b) c.
 Proof.
     intros. rewrite <- custom_eq.
     apply eq_var. intros. simpl.
     rewrite Rplus_assoc. reflexivity.
+Qed.
+
+Theorem expr_sum_associative': forall a b c: RatExpr, expr_sum a (expr_sum b c) = expr_sum (expr_sum a b) c.
+Proof.
+    intros.
+    destruct a; destruct b; destruct c;
+        simpl;
+        try apply expr_sum_associative;
+        try rewrite Rplus_assoc;
+        try reflexivity;
+        try rewrite <- custom_eq;
+        try apply eq_var;
+        try intros;
+        try simpl;
+        try rewrite ?Rplus_assoc; (* rewrite as many times as possible *)
+        try reflexivity.
 Qed.
 
 Theorem expr_sum_cancelation: forall a: RatExpr, Sum a (Minus a) = Const 0.
