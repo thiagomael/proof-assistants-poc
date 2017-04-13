@@ -113,7 +113,7 @@ Proof.
     apply StateMaps.find_2 in H_mapsto.
     apply StateMaps.map_1 with (elt':=StateMaps.t R) (f:=fun r : StateMaps.t RatExpr => eval_row r u) in H_mapsto.
     apply StateMaps.find_1 in H_mapsto. rewrite -> H_mapsto.
-    unfold option_map. reflexivity.
+    unfold option_map. trivial.
 Qed.
 
 Lemma commutative_eval_mapsto:
@@ -121,7 +121,21 @@ Lemma commutative_eval_mapsto:
         StateMaps.MapsTo s v (eval_row r u) ->
             ( exists e: RatExpr, StateMaps.MapsTo s e r
               /\ v = eval_expr e u ).
-Admitted.
+Proof.
+    intros.
+    assert (H':=H). (* backing H up *)
+  (* we first prove that s in (eval_row r u) implies s in r *)
+    apply mapsto_in in H.
+    apply StateMaps.map_2 in H. rewrite in_mapsto in H.
+    destruct H as [e H].
+  (* now we have a witness that s in r *)
+    exists e.
+    split. apply H.
+  (* to prove the equality, we rely on results about 'map' *)
+    unfold eval_row in H'.
+    apply StateMaps.map_1 with (f:=(fun val : RatExpr => eval_expr val u)) in H.
+    symmetry. apply (StateMapsFacts.MapsTo_fun H H').
+Qed.
 
 Lemma eval_matrix_in:
     forall (m: TransitionMatrix RatExpr) (s: State) (u: Evaluation),
@@ -136,7 +150,7 @@ Proof.
       apply StateMaps.map_1 with (f:=(fun r : StateMaps.t RatExpr => eval_row r u)).
       apply H0.
     - (* <- *)
-      intros. apply StateMaps.map_2 in H. apply H.
+      intros. apply (StateMaps.map_2 H).
 Qed.
 
 Lemma eval_matrix_mapsto:
@@ -152,11 +166,20 @@ Lemma eval_matrix_evaluated_expr:
             ( exists e: StateMaps.t RatExpr, StateMaps.MapsTo s e m
               /\ r = eval_row e u ).
 Proof.
-Admitted.
-
-Lemma sum_in_list: forall (l: list RatExpr) (e: RatExpr) (a0: RatExpr),
-    In e l -> fold_left expr_sum l a0 = expr_sum e (fold_left expr_sum (remove RatExpr.eq_dec e l) a0).
-Admitted.
+    intros.
+    assert (H':=H). (* backing H up *)
+  (* we first prove that s in (eval_row r u) implies s in r *)
+    apply mapsto_in in H.
+    apply StateMaps.map_2 in H. rewrite in_mapsto in H.
+    destruct H as [e H].
+  (* now we have a witness that s in r *)
+    exists e.
+    split. apply H.
+  (* to prove the equality, we rely on results about 'map' *)
+    unfold eval_matrix in H'.
+    apply StateMaps.map_1 with (f:=(fun r : StateMaps.t RatExpr => eval_row r u)) in H.
+    symmetry. apply (StateMapsFacts.MapsTo_fun H H').
+Qed.
 
 
 Lemma sum_accumulator_commutative (T: Type):
