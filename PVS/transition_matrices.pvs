@@ -1,0 +1,76 @@
+transition_matrices  [ K: TYPE+,
+		       V: TYPE ]
+		: THEORY
+  BEGIN
+  
+  transition_row: TYPE = [# dom  : finite_set[K],
+  		       	    trans: [(dom) -> V] #]
+  image(r: transition_row): finite_set[V] =
+      image(r`trans, r`dom)
+
+  transition_matrix: TYPE = [# dom  : finite_set[K],
+  		     	       trans: [(dom) -> {r: transition_row | r`dom = dom}] #]
+
+  finite_rows: LEMMA
+      FORALL (m: transition_matrix, s: (m`dom)): is_finite(image(m`trans(s)))
+
+  image(m: transition_matrix): finite_set[V] =
+      {v: V | EXISTS(s1: (m`dom)): image(m`trans(s1))(v)}
+
+      %finite_sets_sum[(m`dom), finite_set[V], emptyset[V], union].sum((m`dom), LAMBDA (k: (m`dom)): image(m`trans(k)))
+
+  END transition_matrices
+
+
+
+transition_matrices_map [ K: TYPE+,
+			  V1: TYPE,
+			  V2: TYPE ]
+		: THEORY
+  BEGIN
+
+  IMPORTING transition_matrices[K, V1], transition_matrices[K, V2]
+
+  %map(r: transition_matrices[K, V1].transition_row, f: [V1 -> V2]): {rr: transition_row[K, V2] | dom(rr) = dom(r)} =
+  %    (# dom   := dom(r),
+  %    	 trans := LAMBDA (s: (dom(r))): f(trans(r)(s)) #)
+  %	 
+  %map(m: transition_matrix[K, V1], f: [V1 -> V2]): {mm: transition_matrix[K, V2] | dom(mm) = dom(m)} =
+  %    (# dom   := dom(m),
+  %    	 trans := LAMBDA (s: (dom(m))): map(trans(m)(s), f) #)
+  
+  map(r: transition_matrices[K, V1].transition_row,
+      f: [(image(r)) -> V2]): {rr: transition_row[K, V2] | dom(rr) = dom(r)} =
+      (# dom   := dom(r),
+      	 trans := LAMBDA (s: (dom(r))): f(trans(r)(s)) #)
+  	 
+  map(m: transition_matrix[K, V1],
+      f: [(image(m)) -> V2]): {mm: transition_matrix[K, V2] | dom(mm) = dom(m)} =
+      (# dom   := dom(m),
+      	 trans := LAMBDA (s: (dom(m))): map(trans(m)(s),
+					restrict[(image(m)), (image(m`trans(s))), V2](f)) #)
+
+  END transition_matrices_map
+
+
+
+transition_matrices_sum  [ K: TYPE+,
+		       	   R: TYPE,
+		       	   V: TYPE FROM R,
+		       	   +: {op: [R, R -> R] | associative?(op) AND commutative?(op)},
+		       	   zero: (identity?[R](+)) ]
+		: THEORY
+
+  BEGIN
+
+  IMPORTING transition_matrices[K, V]
+
+  sum(r: transition_row[K, V]): R =
+      finite_sets_sum[(dom(r)), R, zero, +].sum((dom(r)),
+						LAMBDA (s: (dom(r))): trans(r)(s))
+
+  sum(m: transition_matrix[K, V]): R =
+      finite_sets_sum[(dom(m)), R, zero, +].sum((dom(m)),
+						LAMBDA (s: (dom(m))): sum(trans(m)(s)))
+
+  END transition_matrices_sum

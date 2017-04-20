@@ -1,0 +1,16 @@
+(real_transition_matrices
+ (IMP_transition_matrices_sum_TCC1 0
+  (IMP_transition_matrices_sum_TCC1-1 nil 3701626045
+   ("" (subtype-tcc) nil nil)
+   ((real_plus_real_is_real application-judgement "real" reals nil)
+    (associative? const-decl "bool" operator_defs nil)
+    (commutative? const-decl "bool" operator_defs nil)
+    (restrict const-decl "R" restrict nil))
+   nil))
+ (IMP_transition_matrices_sum_TCC2 0
+  (IMP_transition_matrices_sum_TCC2-1 nil 3701626045
+   ("" (subtype-tcc) nil nil)
+   ((restrict const-decl "R" restrict nil)
+    (identity? const-decl "bool" operator_defs nil))
+   nil)))
+

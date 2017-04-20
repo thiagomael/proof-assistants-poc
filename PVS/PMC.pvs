@@ -1,0 +1,37 @@
+PMC [ state: TYPE+,
+      variable: TYPE+ ]
+		: THEORY
+
+  BEGIN
+
+  IMPORTING rational_expressions[variable]
+  IMPORTING parametric_transition_matrices[state, variable]
+
+  PMC: TYPE = [# S : non_empty_finite_set[state],
+  	     	 s0: (S),
+		 P : {m: parametric_transition_matrix | dom(m) = S},
+		 X : {V: finite_set[variable] | V = vars(P)},
+		 T : non_empty_finite_set[(S)] #]
+
+
+  prob_set (d: PMC, s: (d`S), T: non_empty_finite_set[(d`S)]): rat_expr
+  prob (d: PMC, s: (d`S), t: (d`S)): rat_expr = prob_set(d, s, singleton(t))
+
+  IMPORTING DTMC[state]
+  
+  eval(p: PMC, u: (wf_evaluation(p`P))): DTMC = (# S  := p`S,
+  	       	  		       	      	   s0 := p`s0,
+						   P  := eval(p`P, u),
+						   T  := p`T #)
+
+  well_defined_evaluation(p: PMC)(u: (wf_evaluation(p`P))): boolean = TRUE
+
+  % Parametric model checking
+  alpha_v(p: PMC): rat_expr = prob_set(p, p`s0, p`T)
+
+  % Hahn's lemma
+  parametric_reachability_soundness: AXIOM
+      FORALL (p: PMC, u: (well_defined_evaluation(p))):
+          prob_set(eval(p, u), p`s0, p`T) = eval(alpha_v(p), u)
+
+  END PMC

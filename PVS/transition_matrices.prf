@@ -1,0 +1,74 @@
+(transition_matrices
+ (finite_rows 0
+  (finite_rows-1 nil 3701557817 ("" (grind) nil nil)
+   ((image const-decl "finite_set[V]" transition_matrices nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil))
+   shostak))
+ (image_TCC1 0
+  (image_TCC1-1 nil 3701552481 ("" (subtype-tcc) nil nil)
+   ((finite_union application-judgement "finite_set" finite_sets nil))
+   nil)))
+(transition_matrices_map
+ (map_TCC1 0
+  (map_TCC1-1 nil 3701552481 ("" (subtype-tcc) nil nil)
+   ((boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (V1 formal-type-decl nil transition_matrices_map nil)
+    (K formal-nonempty-type-decl nil transition_matrices_map nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (image const-decl "set[R]" function_image nil)
+    (restrict const-decl "R" restrict nil))
+   nil))
+ (map_TCC2 0
+  (map_TCC2-1 nil 3701555391 ("" (subtype-tcc) nil nil)
+   ((boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (set type-eq-decl nil sets nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (transition_matrix type-eq-decl nil transition_matrices nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (V1 formal-type-decl nil transition_matrices_map nil)
+    (K formal-nonempty-type-decl nil transition_matrices_map nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (image const-decl "set[R]" function_image nil)
+    (image const-decl "finite_set[V]" transition_matrices nil))
+   nil))
+ (map_TCC3 0
+  (map_TCC3-1 nil 3701555391 ("" (subtype-tcc) nil nil)
+   ((boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (K formal-nonempty-type-decl nil transition_matrices_map nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (V1 formal-type-decl nil transition_matrices_map nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (set type-eq-decl nil sets nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (transition_matrix type-eq-decl nil transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (map const-decl "{rr: transition_row[K, V2] | dom(rr) = dom(r)}"
+         transition_matrices_map nil))
+   nil)))
+(transition_matrices_sum
+ (sum_TCC1 0
+  (sum_TCC1-1 nil 3701552481 ("" (assuming-tcc) nil nil) nil nil))
+ (sum_TCC2 0
+  (sum_TCC2-1 nil 3701552481 ("" (assuming-tcc) nil nil) nil nil))
+ (sum_TCC3 0
+  (sum_TCC3-1 nil 3701552481 ("" (assuming-tcc) nil nil) nil nil))
+ (sum_TCC4 0
+  (sum_TCC4-1 nil 3701552481 ("" (assuming-tcc) nil nil) nil nil)))
+

@@ -1,0 +1,19 @@
+DTMC  [ state: TYPE+ ]
+		: THEORY
+
+  BEGIN
+
+  probability: TYPE+ = {x:nnreal | x <= 1} CONTAINING 1
+
+  IMPORTING real_transition_matrices[state]
+
+  
+  DTMC: TYPE = [# S : non_empty_finite_set[state],
+  	     	  s0: (S),
+		  P : {m: real_transition_matrices[state].transition_matrix | dom(m) = S},
+		  T : non_empty_finite_set[(S)] #]
+
+  prob_set (d: DTMC, s: (d`S), T: non_empty_finite_set[(d`S)]): probability
+  prob (d: DTMC, s: (d`S), t: (d`S)): probability = prob_set(d, s, singleton(t))
+
+  End DTMC

@@ -1,0 +1,61 @@
+rational_expressions  [ variable: TYPE+ ]
+		: THEORY
+
+  BEGIN
+
+  rat_expr: DATATYPE
+    BEGIN
+	const(r: real): const?
+	variable(x: variable): variable?
+	minus(a: rat_expr): minus?
+	sum(a,b: rat_expr): sum?
+	sub(a,b: rat_expr): sub?
+	mul(a,b: rat_expr): mul?
+	div(a,b: rat_expr): div?
+    END rat_expr
+
+  zero: rat_expr = const(0)
+  
+  a, b: VAR rat_expr
+
+  ; -(a): rat_expr = minus(a)
+  ; +(a,b): rat_expr = sum(a, b)
+  ; -(a,b): rat_expr = sub(a, b)
+  ; *(a,b): rat_expr = mul(a, b)
+  ; /(a,b): rat_expr = div(a, b)
+
+  vars(e: rat_expr): RECURSIVE finite_set[variable] =
+    CASES e of
+        const(r)    : emptyset,
+	variable(x) : singleton(x),
+	minus(a)    : vars(a),
+	sum(a, b)   : union(vars(a), vars(b)),
+	sub(a, b)   : union(vars(a), vars(b)),
+	mul(a, b)   : union(vars(a), vars(b)),
+	div(a, b)   : union(vars(a), vars(b))
+    ENDCASES
+    MEASURE e BY <<
+
+  evaluation: TYPE = [variable -> real]
+
+  eval (e: rat_expr, u: evaluation): RECURSIVE real =
+    CASES e of
+        const(r)    : r,
+	variable(x) : u(x),
+	minus(a)    : - eval(a, u),
+	sum(a, b)   : eval(a, u) + eval(b, u),
+	sub(a, b)   : eval(a, u) - eval(b, u),
+	mul(a, b)   : eval(a, u) * eval(b, u),
+	div(a, b)   : eval(a, u) / eval(b, u)
+    ENDCASES
+    MEASURE e BY <<
+
+  eval_equality: AXIOM
+    FORALL (x,y: rat_expr, u: evaluation): eval(x, u) = eval(y, u) IMPLIES x = y
+
+  zero_sum_identity: THEOREM identity?(+)(zero)
+
+  sum_associative: THEOREM associative?(+)
+  sum_commutative: THEOREM commutative?(+)
+
+  END rational_expressions

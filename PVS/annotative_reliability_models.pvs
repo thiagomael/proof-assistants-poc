@@ -1,0 +1,59 @@
+annotative_reliability_models  % [ parameters ]
+		: THEORY
+
+  BEGIN
+
+  IMPORTING SPL_reliability
+
+  is_switch_row?(r: parametric_transition_row): boolean =
+      EXISTS (s1, s2: (dom(r)), x: variable):
+          s1 /= s2
+	AND
+	  trans(r)(s1) = variable(x)
+	AND
+	  trans(r)(s2) = sub(const(1), variable(x))
+	AND
+	  FORALL (s3: (remove(s2, remove(s1, dom(r))))):
+	      trans(r)(s3) = const(0)
+
+  IMPORTING finite_sets_sum[(dom(r)), real, 0, +]
+
+  wtf_lemma: LEMMA
+      FORALL (r: (is_switch_row?),
+      	      s1, s2: (dom(r))):
+          (LAMBDA (s: (dom(r))): remove(s2, remove(s1, dom(r)))(s)) = remove(s2, remove(s1, LAMBDA (s: (dom(r))): TRUE))
+
+  switch_row_sums_1: LEMMA
+      FORALL (r: (is_switch_row?)):
+          FORALL (u: evaluation):
+	      finite_sets_sum[(dom(r)), real, 0, +].sum(dom(r), LAMBDA (s: (dom(r))): eval(trans(r)(s), u)) = 1
+
+  annotative_PMC(p: PMC): boolean =
+      FORALL (s: (p`S)):
+          is_stochastic_row?(trans(p`P)(s))
+	OR
+	  is_switch_row?(trans(p`P)(s))
+
+  the_annotative_evaluation_factory(fm: FM,
+				    p: (annotative_PMC),
+				    pf: presence_function(fm, p`X))
+			: evaluation_factory(fm, p) =
+      LAMBDA (c: (fm_semantics(fm))):
+          LAMBDA (x: variable):		% It should be (p`X), but this presumes evaluation(X)
+	      IF pf(x, c) THEN 1
+	      ELSE 0
+	      ENDIF
+
+  annotative_evaluation_factory?(fm: FM,
+				 p: (annotative_PMC),
+				 pf: presence_function(fm, p`X))
+				(w: evaluation_factory(fm, p))
+			: boolean =
+      w = the_annotative_evaluation_factory(fm, p, pf)
+
+  annotative_reliability_model: TYPE = [# P: (annotative_PMC),
+  				       	  fm: FM,
+					  pf: presence_function(fm, P`X),
+					  w: (annotative_evaluation_factory?(fm, P, pf)) #]
+
+  END annotative_reliability_models

@@ -1,0 +1,168 @@
+(PMC
+ (eval_TCC1 0
+  (eval_TCC1-1 nil 3701626077 ("" (subtype-tcc) nil nil)
+   ((PMC type-eq-decl nil PMC nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (non_empty_finite_set type-eq-decl nil finite_sets nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (parametric_transition_matrix type-eq-decl nil
+     parametric_transition_matrices nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (set type-eq-decl nil sets nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (eval const-decl "mapped_real_transition_row(r)"
+          parametric_transition_matrices nil)
+    (pre_wf_evaluation const-decl "boolean"
+     parametric_transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (probability nonempty-type-eq-decl nil real_transition_matrices
+     nil)
+    (<= const-decl "bool" reals nil)
+    (nnreal type-eq-decl nil real_types nil)
+    (>= const-decl "bool" reals nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (number nonempty-type-decl nil numbers nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (variable formal-nonempty-type-decl nil PMC nil)
+    (state formal-nonempty-type-decl nil PMC nil)
+    (map const-decl "{rr: transition_row[K, V2] | dom(rr) = dom(r)}"
+         transition_matrices_map nil)
+    (map const-decl "{mm: transition_matrix[K, V2] | dom(mm) = dom(m)}"
+         transition_matrices_map nil)
+    (eval const-decl
+          "{mm: mapped_real_transition_matrix(m) | is_stochastic_matrix?(mm)}"
+          parametric_transition_matrices nil)
+    (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
+    (is_stochastic_row? const-decl "boolean" real_transition_matrices
+     nil)
+    (is_stochastic_matrix? const-decl "boolean"
+     real_transition_matrices nil))
+   nil))
+ (parametric_reachability_soundness_TCC1 0
+  (parametric_reachability_soundness_TCC1-1 nil 3701626342
+   ("" (subtype-tcc) nil nil)
+   ((restrict const-decl "R" restrict nil)
+    (probability nonempty-type-eq-decl nil real_transition_matrices
+     nil)
+    (<= const-decl "bool" reals nil)
+    (nnreal type-eq-decl nil real_types nil)
+    (>= const-decl "bool" reals nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (number nonempty-type-decl nil numbers nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (variable formal-nonempty-type-decl nil PMC nil)
+    (state formal-nonempty-type-decl nil PMC nil)
+    (map const-decl "{rr: transition_row[K, V2] | dom(rr) = dom(r)}"
+         transition_matrices_map nil)
+    (map const-decl "{mm: transition_matrix[K, V2] | dom(mm) = dom(m)}"
+         transition_matrices_map nil)
+    (eval const-decl
+          "{mm: mapped_real_transition_matrix(m) | is_stochastic_matrix?(mm)}"
+          parametric_transition_matrices nil)
+    (eval const-decl "DTMC" PMC nil))
+   nil))
+ (parametric_reachability_soundness_TCC2 0
+  (parametric_reachability_soundness_TCC2-1 nil 3701626342
+   ("" (skolem * ("p" "u") :skolem-typepreds? T)
+    (("" (split)
+      (("1" (grind) nil nil)
+       ("2" (typepred "p`T") (("2" (grind) nil nil)) nil)
+       ("3" (typepred "p`T") (("3" (grind) nil nil)) nil))
+      nil))
+    nil)
+   ((variable formal-nonempty-type-decl nil PMC nil)
+    (state formal-nonempty-type-decl nil PMC nil)
+    (pre_wf_evaluation const-decl "boolean"
+     parametric_transition_matrices nil)
+    (probability nonempty-type-eq-decl nil real_transition_matrices
+     nil)
+    (<= const-decl "bool" reals nil)
+    (nnreal type-eq-decl nil real_types nil)
+    (>= const-decl "bool" reals nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (number nonempty-type-decl nil numbers nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (map const-decl "{rr: transition_row[K, V2] | dom(rr) = dom(r)}"
+         transition_matrices_map nil)
+    (eval const-decl "mapped_real_transition_row(r)"
+          parametric_transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (member const-decl "bool" sets nil)
+    (empty? const-decl "bool" sets nil)
+    (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
+    (is_stochastic_row? const-decl "boolean" real_transition_matrices
+     nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (well_defined_evaluation const-decl "boolean" PMC nil)
+    (map const-decl "{mm: transition_matrix[K, V2] | dom(mm) = dom(m)}"
+         transition_matrices_map nil)
+    (eval const-decl
+          "{mm: mapped_real_transition_matrix(m) | is_stochastic_matrix?(mm)}"
+          parametric_transition_matrices nil)
+    (eval const-decl "DTMC" PMC nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (injective? const-decl "bool" functions nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (non_empty_finite_set type-eq-decl nil finite_sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (set type-eq-decl nil sets nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (parametric_transition_matrix type-eq-decl nil
+     parametric_transition_matrices nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
+    (PMC type-eq-decl nil PMC nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (real_transition_matrix type-eq-decl nil real_transition_matrices
+     nil)
+    (is_stochastic_matrix? const-decl "boolean"
+     real_transition_matrices nil)
+    (transition_matrix type-eq-decl nil real_transition_matrices nil)
+    (DTMC type-eq-decl nil DTMC nil)
+    (rational_pred const-decl "[real -> boolean]" rationals nil)
+    (rational nonempty-type-from-decl nil rationals nil)
+    (integer_pred const-decl "[rational -> boolean]" integers nil)
+    (int nonempty-type-eq-decl nil integers nil)
+    (nat nonempty-type-eq-decl nil naturalnumbers nil))
+   nil)))
+

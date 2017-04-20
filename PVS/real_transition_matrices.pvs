@@ -1,0 +1,22 @@
+real_transition_matrices  [ state: TYPE+ ]
+		: THEORY
+
+  BEGIN
+
+  probability: TYPE+ = {x:nnreal  | x <= 1} CONTAINING 1
+
+  IMPORTING transition_matrices[state, probability],
+  	    transition_matrices_sum[state, real, probability, +, 0]
+
+  
+  real_transition_row: TYPE = transition_row
+  real_transition_matrix: TYPE = transition_matrix
+
+
+  is_stochastic_row?(r: real_transition_row): boolean = sum(r) = 1
+  is_stochastic_matrix?(m: real_transition_matrix): boolean = FORALL (s: (dom(m))): is_stochastic_row?( trans(m)(s) )
+
+  transition_row: TYPE = (is_stochastic_row?)
+  transition_matrix: TYPE = (is_stochastic_matrix?)
+
+  END real_transition_matrices

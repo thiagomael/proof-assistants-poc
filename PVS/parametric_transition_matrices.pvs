@@ -1,0 +1,72 @@
+parametric_transition_matrices [ state: TYPE+,
+			       	 variable: TYPE+ ]
+		: THEORY
+
+  BEGIN
+
+  IMPORTING finite_sets[state], finite_sets[variable]
+  IMPORTING rational_expressions[variable]
+  IMPORTING transition_matrices[state, rat_expr]
+  %IMPORTING transition_matrices_sum[state, rat_expr, rat_expr, rational_expressions.sum, zero]
+
+  
+  parametric_transition_row: TYPE = transition_row
+  parametric_transition_matrix: TYPE = transition_matrix
+
+
+  IMPORTING real_transition_matrices[state],
+  	    transition_matrices_map[state, rat_expr, probability]
+
+  pre_wf_evaluation(r: parametric_transition_row) (u: evaluation): boolean =
+      FORALL (s: (dom(r))): eval(trans(r)(s), u) >= 0 AND eval(trans(r)(s), u) <= 1
+
+  JUDGEMENT FORALL(r: parametric_transition_row,
+  	    	   u: (pre_wf_evaluation(r)),
+  		   s: (dom(r)),
+  		   e: {e_: rat_expr | EXISTS (s: (dom(r))): e_ = trans(r)(s)}):
+      eval(e, u) HAS_TYPE probability
+
+
+  r: VAR parametric_transition_row
+  mapped_real_transition_row(r): TYPE = {rr: real_transition_row | dom(rr) = dom(r)}
+  m: VAR parametric_transition_matrix
+  mapped_real_transition_matrix(m): TYPE = {mm: real_transition_matrix | dom(mm) = dom(m)}
+
+  eval(r: parametric_transition_row, u: (pre_wf_evaluation(r))): mapped_real_transition_row(r) =
+      map(r, LAMBDA (e: (image(r))): eval(e, u))
+
+  wf_evaluation(r: parametric_transition_row) (u: evaluation): boolean =
+      pre_wf_evaluation(r)(u) AND is_stochastic_row?(eval(r, u))
+
+  wf_evaluation(m: parametric_transition_matrix) (u: evaluation): boolean =
+      FORALL (s: (dom(m))): wf_evaluation(trans(m)(s))(u)
+
+
+  eval(m: parametric_transition_matrix, u: (wf_evaluation(m))): {mm: mapped_real_transition_matrix(m) | is_stochastic_matrix?(mm)} =
+      map(m, LAMBDA (e: (image(m))): eval(e, u))
+
+
+  vars(r: parametric_transition_row): finite_set[variable] =
+      {v: variable | EXISTS (e: (image(r))): vars(e)(v)}   	    	       		    	       	 % TCC: prove this is a finite set
+      %{V: finite_set[variable] | FORALL (v: variable): V(v) IMPLIES EXISTS (e: (image(r))): vars(e)(v) } % TCC: prove this is a singleton
+      %finite_sets_sum[(dom(r)), finite_set[variable], emptyset[variable], union].sum(dom(r), LAMBDA (s: (dom(r))): vars(trans(r)(s)))  % TCC: prove this is a finite set + commutativity, associativity, and identity element.
+
+  vars(m: parametric_transition_matrix): finite_set[variable] =
+      {v: variable | EXISTS (e: (image(m))): vars(e)(v)}
+      %finite_sets_sum[(dom(m)), finite_set[variable], emptyset[variable], union].sum(dom(m), LAMBDA (s: (dom(m))): vars(trans(m)(s)))
+
+  is_stochastic_row?(r: parametric_transition_row): boolean =
+      FORALL (u: evaluation):
+          wf_evaluation(r)(u)
+
+
+  IMPORTING finite_sets_sum[(dom(r)), real, 0, +]
+  row_of_zeros: LEMMA
+      FORALL (r: parametric_transition_row,
+              S: {S_: finite_set[(dom(r))] | subset?(S_, dom(r))},
+	      u: evaluation):
+	  (FORALL (s: (S)): trans(r)(s) = const(0))
+	IMPLIES
+	  finite_sets_sum[(dom(r)), real, 0, +].sum(S, LAMBDA (s: (dom(r))): eval(trans(r)(s), u)) = 0 
+
+  END parametric_transition_matrices

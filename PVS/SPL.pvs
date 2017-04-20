@@ -1,0 +1,10 @@
+SPL  % [ parameters ]
+		: THEORY
+
+  BEGIN
+
+  FM: TYPE
+  configuration: TYPE
+  fm_semantics: [FM -> finite_set[configuration]]
+
+  END SPL
