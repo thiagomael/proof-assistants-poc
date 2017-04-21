@@ -7,6 +7,7 @@ PMC [ state: TYPE+,
   IMPORTING rational_expressions[variable]
   IMPORTING parametric_transition_matrices[state, variable]
 
+  % Definition 1 - Parametric Markov Chain
   PMC: TYPE = [# S : non_empty_finite_set[state],
   	     	 s0: (S),
 		 P : {m: parametric_transition_matrix | dom(m) = S},
@@ -24,12 +25,13 @@ PMC [ state: TYPE+,
 						   P  := eval(p`P, u),
 						   T  := p`T #)
 
+  % Definition 2 - Well-defined evaluation
   well_defined_evaluation(p: PMC)(u: (wf_evaluation(p`P))): boolean = TRUE
 
-  % Parametric model checking
+  % Definition 22 - Parametric model checking (Hahn's algorithm)
   alpha_v(p: PMC): rat_expr = prob_set(p, p`s0, p`T)
 
-  % Hahn's lemma
+  % Lemma 1 - Parametric probabilistic reachability soundness (Hahn's lemma)
   parametric_reachability_soundness: AXIOM
       FORALL (p: PMC, u: (well_defined_evaluation(p))):
           prob_set(eval(p, u), p`s0, p`T) = eval(alpha_v(p), u)

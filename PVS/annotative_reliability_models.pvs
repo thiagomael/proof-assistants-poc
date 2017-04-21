@@ -5,6 +5,8 @@ annotative_reliability_models  % [ parameters ]
 
   IMPORTING SPL_reliability
 
+  % A row in a parametric transition matrix such that there
+  % are only "switch" transitions (with probabilities x and 1-x).
   is_switch_row?(r: parametric_transition_row): boolean =
       EXISTS (s1, s2: (dom(r)), x: variable):
           s1 /= s2
@@ -18,22 +20,24 @@ annotative_reliability_models  % [ parameters ]
 
   IMPORTING finite_sets_sum[(dom(r)), real, 0, +]
 
-  wtf_lemma: LEMMA
-      FORALL (r: (is_switch_row?),
-      	      s1, s2: (dom(r))):
-          (LAMBDA (s: (dom(r))): remove(s2, remove(s1, dom(r)))(s)) = remove(s2, remove(s1, LAMBDA (s: (dom(r))): TRUE))
-
   switch_row_sums_1: LEMMA
       FORALL (r: (is_switch_row?)):
           FORALL (u: evaluation):
-	      finite_sets_sum[(dom(r)), real, 0, +].sum(dom(r), LAMBDA (s: (dom(r))): eval(trans(r)(s), u)) = 1
+	      finite_sets_sum[(dom(r)), real, 0, +]
+	      .sum(dom(r), LAMBDA (s: (dom(r))): eval(trans(r)(s), u)) = 1
 
+  % Definition 3 - Annotative PMC
   annotative_PMC(p: PMC): boolean =
       FORALL (s: (p`S)):
           is_stochastic_row?(trans(p`P)(s))
 	OR
 	  is_switch_row?(trans(p`P)(s))
 
+  % This is the definition of an evaluation factory for an annotative reliability model
+  % (w in Def. 6)
+  % This definition generates a subtype TCC that is equivalent
+  % to Lemma 2 - this evaluation factory only yields well-defined
+  % evaluations.
   the_annotative_evaluation_factory(fm: FM,
 				    p: (annotative_PMC),
 				    pf: presence_function(fm, p`X))
@@ -44,6 +48,7 @@ annotative_reliability_models  % [ parameters ]
 	      ELSE 0
 	      ENDIF
 
+  % A type to encode the above definition
   annotative_evaluation_factory?(fm: FM,
 				 p: (annotative_PMC),
 				 pf: presence_function(fm, p`X))
@@ -51,6 +56,10 @@ annotative_reliability_models  % [ parameters ]
 			: boolean =
       w = the_annotative_evaluation_factory(fm, p, pf)
 
+  % Definition 6 - Annotative probabilistic model
+  % (while specifying in PVS, it occurred to me that this
+  % concept would be more explicit if we called it
+  % Annotative **reliability** model)
   annotative_reliability_model: TYPE = [# P: (annotative_PMC),
   				       	  fm: FM,
 					  pf: presence_function(fm, P`X),

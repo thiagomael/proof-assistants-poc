@@ -9,11 +9,14 @@ SPL_reliability % [ ]
   IMPORTING SPL,
   	    PMC[state, variable]
 
+  % Definition 4 - Presence function
   presence_function(fm: FM, X: finite_set[variable]): TYPE = [[variable, (fm_semantics(fm))] -> boolean]
   %presence_function(fm: FM, X: finite_set[variable]): TYPE = [[(X), (fm_semantics(fm))] -> boolean]
+
+  % Definition 5 - Evaluation factory
   evaluation_factory(fm: FM, p: PMC): TYPE = [(fm_semantics(fm)) -> (well_defined_evaluation(p))]
 
-  % Definition 7 (DTMC derivation)
+  % Definition 7 - DTMC derivation
   lambda_(p: PMC, fm: FM, w: evaluation_factory(fm, p), c: (fm_semantics(fm))): DTMC =
       eval(p, w(c))
 
