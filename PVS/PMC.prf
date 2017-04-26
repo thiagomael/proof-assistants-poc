@@ -164,5 +164,9 @@
     (integer_pred const-decl "[rational -> boolean]" integers nil)
     (int nonempty-type-eq-decl nil integers nil)
     (nat nonempty-type-eq-decl nil naturalnumbers nil))
-   nil)))
+   nil))
+ (parametric_reachability_soundness_TCC3 0
+  (parametric_reachability_soundness_TCC3-1 nil 3702149468
+   ("" (use "alpha_v_eval_is_real") nil nil)
+   ((alpha_v_eval_is_real formula-decl nil PMC nil)) nil)))
 

@@ -19,12 +19,11 @@ annotative_reliability_models  % [ parameters ]
 	      trans(r)(s3) = const(0)
 
   IMPORTING finite_sets_sum[(dom(r)), real, 0, +]
+  IMPORTING finite_sets_sum_real[state]
 
   switch_row_sums_1: LEMMA
-      FORALL (r: (is_switch_row?)):
-          FORALL (u: evaluation):
-	      finite_sets_sum[(dom(r)), real, 0, +]
-	      .sum(dom(r), LAMBDA (s: (dom(r))): eval(trans(r)(s), u)) = 1
+      FORALL (r: (is_switch_row?), u: (pre_wf_evaluation(r))):
+          sum(eval(r, u)) = 1
 
   % Definition 3 - Annotative PMC
   annotative_PMC(p: PMC): boolean =

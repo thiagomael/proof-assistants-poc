@@ -10,116 +10,101 @@
     (rat_expr type-decl nil rational_expressions nil)
     (parametric_transition_row type-eq-decl nil
      parametric_transition_matrices nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
     (member const-decl "bool" sets nil)
     (remove const-decl "set" sets nil) (set type-eq-decl nil sets nil)
     (/= const-decl "boolean" notequal nil))
    nil))
- (switch_row_sums_1_TCC1 0
-  (switch_row_sums_1_TCC1-1 nil 3701707214 ("" (assuming-tcc) nil nil)
+ (IMP_finite_sets_sum_TCC1 0
+  (IMP_finite_sets_sum_TCC1-1 nil 3702154205
+   ("" (assuming-tcc) nil nil)
    ((restrict const-decl "R" restrict nil)
     (identity? const-decl "bool" operator_defs nil))
    nil))
- (switch_row_sums_1_TCC2 0
-  (switch_row_sums_1_TCC2-1 nil 3701707214 ("" (assuming-tcc) nil nil)
-   ((restrict const-decl "R" restrict nil)
+ (IMP_finite_sets_sum_TCC2 0
+  (IMP_finite_sets_sum_TCC2-1 nil 3702154205
+   ("" (assuming-tcc) nil nil)
+   ((real_plus_real_is_real application-judgement "real" reals nil)
     (associative? const-decl "bool" operator_defs nil)
     (commutative? const-decl "bool" operator_defs nil)
-    (real_plus_real_is_real application-judgement "real" reals nil))
+    (restrict const-decl "R" restrict nil))
    nil))
  (switch_row_sums_1 0
   (switch_row_sums_1-3 nil 3701780432
-   ("" (skolem * ("r") :skolem-typepreds? T)
-    (("" (skolem * ("u") :skolem-typepreds? T)
-      (("" (expand "is_switch_row?")
-        (("" (skolem - ("s1" "s2" "x") :skolem-typepreds? T)
-          (("" (flatten -)
-            ((""
-              (lemma "finite_sets_sum[(dom(r)), real, 0, +].sum_remove"
-               ("x" "s1" "S" "dom(r)" "f"
-                "LAMBDA (s: (dom(r))): eval(trans(r)(s), u)"))
-              (("" (smash -1)
-                (("1" (rewrite -5 -2)
-                  (("1"
-                    (lemma
-                     "finite_sets_sum[(dom(r)), real, 0, +].sum_remove"
-                     ("x" "s2" "S"
-                      "remove(s1, restrict[state, (dom(r)), boolean](dom(r)))"
-                      "f"
-                      "LAMBDA (s: (dom(r))): eval(trans(r)(s), u)"))
-                    (("1" (smash -1)
-                      (("1" (rewrite -7 -2)
-                        (("1" (rewrite -2 -4 :dir RL)
-                          (("1" (expand "eval" -3 (1 2))
-                            (("1" (expand "eval" -3 (1 3))
+   ("" (skeep :preds? t)
+    (("" (expand "is_switch_row?")
+      (("" (skeep - :preds? t)
+        (("" (expand "sum")
+          (("" (typepred "eval(r, u)")
+            (("" (replace -1)
+              ((""
+                (case-replace
+                 "( LAMBDA (s: (dom(eval(r, u)))): trans(eval(r, u))(s) ) = (LAMBDA (s: (dom(r))): num(eval(trans(r)(s), u)) )")
+                (("1"
+                  (lemma
+                   "finite_sets_sum[(dom(eval(r, u))), real, 0, +].sum_remove"
+                   ("x" "s1" "S" "dom(r)" "f"
+                    "LAMBDA (s: (dom(r))): num(eval(trans(r)(s), u))"))
+                  (("1" (smash -1)
+                    (("1" (replace -2 :dir RL)
+                      (("1"
+                        (lemma
+                         "finite_sets_sum[(dom(eval(r, u))), real, 0, +].sum_remove"
+                         ("x" "s2" "S"
+                          "remove(s1, restrict[state, (dom(eval(r, u))), boolean](dom(r)))"
+                          "f"
+                          "LAMBDA (s: (dom(r))): num(eval(trans(r)(s), u))"))
+                        (("1" (smash -1)
+                          (("1" (replace -2 :dir RL)
+                            (("1" (replace -9)
                               (("1"
-                                (rewrite -3 2 :dir RL)
+                                (replace -10)
                                 (("1"
-                                  (smash +)
+                                  (expand "eval" + (1 2))
                                   (("1"
-                                    (lemma
-                                     "row_of_zeros"
-                                     ("r"
-                                      "r"
-                                      "S"
-                                      "remove(s2, remove(s1, dom(r)))"
-                                      "u"
-                                      "u"))
+                                    (expand "eval" + (1 2 3 4))
                                     (("1"
-                                      (split -1)
-                                      (("1"
-                                        (expand "restrict" *)
-                                        (("1"
-                                          (case-replace
-                                           "(LAMBDA (s: (dom(r))): remove(s2, remove(s1, dom(r)))(s)) = remove(s2, remove(s1, LAMBDA (s: (dom(r))): TRUE))")
-                                          (("1"
-                                            (apply-extensionality 1)
-                                            (("1" (grind) nil nil))
-                                            nil))
-                                          nil))
-                                        nil)
-                                       ("2"
-                                        (skolem
-                                         1
-                                         ("s")
-                                         :skolem-typepreds?
-                                         T)
-                                        (("2"
-                                          (instantiate -7 "s" :copy? T)
-                                          (("1" (propax) nil nil)
-                                           ("2" (grind) nil nil))
-                                          nil))
-                                        nil))
-                                      nil)
-                                     ("2"
                                       (lemma
-                                       "subset_remove"
-                                       ("x"
-                                        "s2"
-                                        "a"
-                                        "remove(s1, dom(r))"))
-                                      (("2"
-                                        (lemma
-                                         "subset_remove"
-                                         ("x" "s1" "a" "dom(r)"))
-                                        (("2"
-                                          (lemma
-                                           "subset_transitive"
-                                           ("a"
-                                            "remove(s2, remove(s1, dom(r)))"
-                                            "b"
-                                            "remove(s1, dom(r))"
-                                            "c"
-                                            "dom(r)"))
-                                          (("2"
-                                            (split -)
+                                       "finite_sets_sum[(dom(eval(r, u))), real, 0, +].sum_f_g"
+                                       ("S"
+                                        "remove(s2, remove(s1, restrict[state, (dom(eval(r, u))), boolean](dom(r))))"
+                                        "f"
+                                        "LAMBDA (s: (dom(r))): num(eval(trans(r)(s), u))"
+                                        "g"
+                                        "LAMBDA (s: (dom(r))): 0"))
+                                      (("1"
+                                        (split -1)
+                                        (("1"
+                                          (replace -1)
+                                          (("1"
+                                            (lemma
+                                             "sum_const[(dom(eval(r, u)))]"
+                                             ("S"
+                                              "remove(s2, remove(s1, restrict[state, (dom(eval(r, u))), boolean](dom(r))))"
+                                              "c"
+                                              "0"))
                                             (("1"
-                                              (expand "restrict" 1)
-                                              (("1" (grind) nil nil))
+                                              (replace -1)
+                                              (("1" (smash +) nil nil))
+                                              nil))
+                                            nil))
+                                          nil)
+                                         ("2"
+                                          (skeep :preds? t)
+                                          (("2"
+                                            (inst? -13)
+                                            (("1"
+                                              (replace -13)
+                                              (("1"
+                                                (expand "eval" 1)
+                                                (("1"
+                                                  (propax)
+                                                  nil
+                                                  nil))
+                                                nil))
                                               nil)
-                                             ("2" (propax) nil nil)
-                                             ("3" (propax) nil nil))
+                                             ("2" (grind) nil nil))
                                             nil))
                                           nil))
                                         nil))
@@ -128,24 +113,28 @@
                                   nil))
                                 nil))
                               nil))
-                            nil))
-                          nil))
-                        nil)
-                       ("2" (expand "member" +)
-                        (("2" (expand "remove" +)
-                          (("2" (expand "member" +)
-                            (("2" (expand "restrict" +)
-                              (("2" (propax) nil nil)) nil))
-                            nil))
+                            nil)
+                           ("2" (grind) nil nil))
                           nil))
                         nil))
-                      nil))
-                    nil))
+                      nil)
+                     ("2" (grind) nil nil))
+                    nil)
+                   ("2" (grind) nil nil) ("3" (grind) nil nil)
+                   ("4" (grind) nil nil) ("5" (grind) nil nil)
+                   ("6" (grind) nil nil))
                   nil)
-                 ("2" (expand "member")
-                  (("2" (expand "restrict") (("2" (propax) nil nil))
-                    nil))
-                  nil))
+                 ("2" (apply-extensionality)
+                  (("1" (typepred "x!1")
+                    (("1" (hide (2 3 4))
+                      (("1" (expand "eval" + (1))
+                        (("1" (grind) nil nil)) nil))
+                      nil))
+                    nil)
+                   ("2" (grind) nil nil) ("3" (grind) nil nil)
+                   ("4" (grind) nil nil))
+                  nil)
+                 ("3" (grind) nil nil) ("4" (grind) nil nil))
                 nil))
               nil))
             nil))
@@ -153,55 +142,97 @@
         nil))
       nil))
     nil)
-   ((+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
+   ((is_switch_row? const-decl "boolean" annotative_reliability_models
+     nil)
+    (sum const-decl "R" transition_matrices_sum nil)
+    (s!1 skolem-const-decl "(dom(r))" annotative_reliability_models
+     nil)
+    (s!1 skolem-const-decl "(dom(r))" annotative_reliability_models
+     nil)
+    (s!1 skolem-const-decl "(dom(r))" annotative_reliability_models
+     nil)
+    (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
     (restrict const-decl "R" restrict nil)
     (numfield nonempty-type-eq-decl nil number_fields nil)
-    (real nonempty-type-from-decl nil reals nil)
-    (real_pred const-decl "[number_field -> boolean]" reals nil)
-    (number_field nonempty-type-from-decl nil number_fields nil)
-    (number_field_pred const-decl "[number -> boolean]" number_fields
-     nil)
-    (number nonempty-type-decl nil numbers nil)
-    (boolean nonempty-type-decl nil booleans nil)
-    (parametric_transition_row type-eq-decl nil
-     parametric_transition_matrices nil)
-    (rat_expr type-decl nil rational_expressions nil)
-    (variable nonempty-type-decl nil SPL_reliability nil)
-    (finite_set type-eq-decl nil finite_sets nil)
-    (state nonempty-type-decl nil SPL_reliability nil)
-    (eval def-decl "real" rational_expressions nil)
-    (evaluation type-eq-decl nil rational_expressions nil)
     (is_finite const-decl "bool" finite_sets nil)
-    (set type-eq-decl nil sets nil)
-    (bool nonempty-type-eq-decl nil booleans nil)
     (sum_remove formula-decl nil finite_sets_sum "finite_sets/")
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (real_plus_real_is_real application-judgement "real" reals nil)
-    (subset_remove formula-decl nil sets_lemmas nil)
-    (subset_transitive formula-decl nil sets_lemmas nil)
-    (TRUE const-decl "bool" booleans nil)
-    (= const-decl "[T, T -> boolean]" equalities nil)
-    (/= const-decl "boolean" notequal nil)
-    (member const-decl "bool" sets nil)
+    (identity? const-decl "bool" operator_defs nil)
+    (commutative? const-decl "bool" operator_defs nil)
+    (associative? const-decl "bool" operator_defs nil)
+    (AND const-decl "[bool, bool -> bool]" booleans nil)
+    (sum_f_g formula-decl nil finite_sets_sum "finite_sets/")
     (empty? const-decl "bool" sets nil)
-    (s skolem-const-decl
-     "(restrict[state, (dom(r)), boolean](remove(s2, remove(s1, dom(r)))))"
+    (map const-decl "{rr: transition_row[K, V2] | dom(rr) = dom(r)}"
+         transition_matrices_map nil)
+    (member const-decl "bool" sets nil)
+    (/= const-decl "boolean" notequal nil)
+    (real_minus_real_is_real application-judgement "real" reals nil)
+    (x!1 skolem-const-decl "(remove(s2,
+        remove(s1, restrict[state, (dom(eval(r, u))), boolean](dom(r)))))"
+     annotative_reliability_models nil)
+    (u skolem-const-decl "(pre_wf_evaluation(r))"
      annotative_reliability_models nil)
     (s1 skolem-const-decl "(dom(r))" annotative_reliability_models nil)
     (s2 skolem-const-decl "(dom(r))" annotative_reliability_models nil)
     (r skolem-const-decl "(is_switch_row?)"
      annotative_reliability_models nil)
-    (subset_is_partial_order name-judgement "(partial_order?[set[T]])"
-     sets_lemmas nil)
-    (subset? const-decl "bool" sets nil)
-    (row_of_zeros formula-decl nil parametric_transition_matrices nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (sum_const formula-decl nil finite_sets_sum_real "finite_sets/")
     (remove const-decl "set" sets nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
-    (is_switch_row? const-decl "boolean" annotative_reliability_models
-     nil))
+    (s!1 skolem-const-decl "(dom(r))" annotative_reliability_models
+     nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (real_le_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (eval def-decl "maybe_real" rational_expressions nil)
+    (num adt-accessor-decl "[(is_real?) -> real]" rational_expressions
+         nil)
+    (is_real? adt-recognizer-decl "[maybe_real -> boolean]"
+     rational_expressions nil)
+    (maybe_real type-decl nil rational_expressions nil)
+    (IFF const-decl "[bool, bool -> bool]" booleans nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (state nonempty-type-decl nil SPL_reliability nil)
+    (set type-eq-decl nil sets nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (variable nonempty-type-decl nil SPL_reliability nil)
+    (parametric_transition_row type-eq-decl nil
+     parametric_transition_matrices nil)
+    (number nonempty-type-decl nil numbers nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (pre_wf_evaluation const-decl "boolean"
+     parametric_transition_matrices nil)
+    (>= const-decl "bool" reals nil)
+    (nnreal type-eq-decl nil real_types nil)
+    (<= const-decl "bool" reals nil)
+    (probability nonempty-type-eq-decl nil real_transition_matrices
+     nil)
+    (real_transition_row type-eq-decl nil real_transition_matrices nil)
+    (mapped_real_transition_row type-eq-decl nil
+     parametric_transition_matrices nil)
+    (eval const-decl "mapped_real_transition_row(r)"
+          parametric_transition_matrices nil))
    nil)
   (switch_row_sums_1-2 nil 3701779947
    ("" (skolem * ("r") :skolem-typepreds? T)
@@ -333,10 +364,7 @@
    ((is_switch_row? const-decl "boolean" annotative_reliability_models
      nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
-    (remove const-decl "set" sets nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
-    (row_of_zeros formula-decl nil parametric_transition_matrices nil)
+    (remove const-decl "set" sets nil) nil
     (subset? const-decl "bool" sets nil)
     (subset_is_partial_order name-judgement "(partial_order?[set[T]])"
      sets_lemmas nil)
@@ -355,7 +383,7 @@
     (set type-eq-decl nil sets nil)
     (is_finite const-decl "bool" finite_sets nil)
     (evaluation type-eq-decl nil rational_expressions nil)
-    (eval def-decl "real" rational_expressions nil)
+    (eval def-decl "maybe_real" rational_expressions nil)
     (state nonempty-type-decl nil SPL_reliability nil)
     (finite_set type-eq-decl nil finite_sets nil)
     (variable nonempty-type-decl nil SPL_reliability nil)
@@ -500,10 +528,7 @@
    ((is_switch_row? const-decl "boolean" annotative_reliability_models
      nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
-    (remove const-decl "set" sets nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
-    (row_of_zeros formula-decl nil parametric_transition_matrices nil)
+    (remove const-decl "set" sets nil) nil
     (subset? const-decl "bool" sets nil)
     (subset_is_partial_order name-judgement "(partial_order?[set[T]])"
      sets_lemmas nil)
@@ -520,7 +545,7 @@
     (set type-eq-decl nil sets nil)
     (is_finite const-decl "bool" finite_sets nil)
     (evaluation type-eq-decl nil rational_expressions nil)
-    (eval def-decl "real" rational_expressions nil)
+    (eval def-decl "maybe_real" rational_expressions nil)
     (state nonempty-type-decl nil SPL_reliability nil)
     (finite_set type-eq-decl nil finite_sets nil)
     (variable nonempty-type-decl nil SPL_reliability nil)
@@ -554,7 +579,9 @@
     (= const-decl "[T, T -> boolean]" equalities nil)
     (parametric_transition_matrix type-eq-decl nil
      parametric_transition_matrices nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
     (PMC type-eq-decl nil PMC nil))
    nil))
  (the_annotative_evaluation_factory_TCC1 0
@@ -588,7 +615,15 @@
         nil))
       nil))
     nil)
-   (nil nil nil (PMC type-eq-decl nil PMC nil) nil
+   ((wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (s skolem-const-decl "(dom(p`P))" annotative_reliability_models
+     nil)
+    (p skolem-const-decl "(annotative_PMC)"
+     annotative_reliability_models nil)
+    (PMC type-eq-decl nil PMC nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
     (is_finite const-decl "bool" finite_sets nil)
     (parametric_transition_matrix type-eq-decl nil
      parametric_transition_matrices nil)
@@ -601,11 +636,13 @@
     (variable nonempty-type-decl nil SPL_reliability nil)
     (finite_set type-eq-decl nil finite_sets nil)
     (non_empty_finite_set type-eq-decl nil finite_sets nil)
-    (state nonempty-type-decl nil SPL_reliability nil) nil
+    (state nonempty-type-decl nil SPL_reliability nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
     (is_stochastic_row? const-decl "boolean" real_transition_matrices
      nil)
-    (restrict const-decl "R" restrict nil)
-    (empty? const-decl "bool" sets nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
     (probability nonempty-type-eq-decl nil real_transition_matrices
      nil)
     (<= const-decl "bool" reals nil)
@@ -615,12 +652,24 @@
          transition_matrices_map nil)
     (eval const-decl "mapped_real_transition_row(r)"
           parametric_transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (empty? const-decl "bool" sets nil)
     (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
-    (numfield nonempty-type-eq-decl nil number_fields nil) nil
-    (finite_restrict application-judgement "finite_set[S]"
-     restrict_set_props nil)
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
+    (s1!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s2!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
     (parametric_transition_row type-eq-decl nil
      parametric_transition_matrices nil)
+    (c skolem-const-decl "(fm_semantics(fm))"
+     annotative_reliability_models nil)
+    (pf skolem-const-decl "presence_function(fm, X)"
+     annotative_reliability_models nil)
+    (fm skolem-const-decl "FM" annotative_reliability_models nil)
     (switch_row_sums_1 formula-decl nil annotative_reliability_models
      nil)
     (/= const-decl "boolean" notequal nil)
@@ -630,13 +679,18 @@
      parametric_transition_matrices nil)
     (is_switch_row? const-decl "boolean" annotative_reliability_models
      nil)
-    (real_minus_real_is_real application-judgement "real" reals nil)
     (real_le_is_total_order name-judgement "(total_order?[real])"
      real_props nil)
-    (eval def-decl "real" rational_expressions nil) nil nil nil
+    (eval def-decl "maybe_real" rational_expressions nil)
+    (s1!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s2!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
     (AND const-decl "[bool, bool -> bool]" booleans nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
     (real_ge_is_total_order name-judgement "(total_order?[real])"
      real_props nil)
     (NOT const-decl "[bool -> bool]" booleans nil)

@@ -31,9 +31,14 @@ PMC [ state: TYPE+,
   % Definition 22 - Parametric model checking (Hahn's algorithm)
   alpha_v(p: PMC): rat_expr = prob_set(p, p`s0, p`T)
 
+  % This is implied in the paper by Hahn et al.
+  alpha_v_eval_is_real: AXIOM
+      FORALL (p: PMC, u: (well_defined_evaluation(p))):
+          is_real?(eval(alpha_v(p), u))
+
   % Lemma 1 - Parametric probabilistic reachability soundness (Hahn's lemma)
   parametric_reachability_soundness: AXIOM
       FORALL (p: PMC, u: (well_defined_evaluation(p))):
-          prob_set(eval(p, u), p`s0, p`T) = eval(alpha_v(p), u)
+          prob_set(eval(p, u), p`s0, p`T) = num(eval(alpha_v(p), u))
 
   END PMC

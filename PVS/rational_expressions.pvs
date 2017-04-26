@@ -38,24 +38,43 @@ rational_expressions  [ variable: TYPE+ ]
 
   evaluation: TYPE = [variable -> real]
 
-  eval (e: rat_expr, u: evaluation): RECURSIVE real =
+  % Introducing "not a number" to overcome possible division by zero.
+  maybe_real: DATATYPE
+    BEGIN
+      real(num: real): is_real?
+      undefined: undefined?
+    END maybe_real
+
+  eval (e: rat_expr, u: evaluation): RECURSIVE maybe_real =
     CASES e of
-        const(r)    : r,
-	variable(x) : u(x),
-	minus(a)    : - eval(a, u),
-	sum(a, b)   : eval(a, u) + eval(b, u),
-	sub(a, b)   : eval(a, u) - eval(b, u),
-	mul(a, b)   : eval(a, u) * eval(b, u),
-	div(a, b)   : eval(a, u) / eval(b, u)
+        const(r)    : real(r),
+	variable(x) : real(u(x)),
+	minus(a)    : LET a_ = eval(a, u) IN
+		        IF is_real?(a_) THEN real(-num(a_))
+		      	ELSE undefined ENDIF,
+	sum(a, b)   : LET a_ = eval(a, u), b_ = eval(b, u) IN
+	       	        IF (is_real?(a_) AND is_real?(b_)) THEN real(num(a_) + num(b_))
+			ELSE undefined ENDIF,
+	sub(a, b)   : LET a_ = eval(a, u), b_ = eval(b, u) IN
+	       	        IF (is_real?(a_) AND is_real?(b_)) THEN real(num(a_) - num(b_))
+			ELSE undefined ENDIF,
+	mul(a, b)   : LET a_ = eval(a, u), b_= eval(b, u) IN
+	       	        IF (is_real?(a_) AND is_real?(b_)) THEN real(num(a_) * num(b_))
+			ELSE undefined ENDIF,
+	div(a, b)   : LET a_ = eval(a, u), b_ = eval(b, u) IN
+	       	        IF is_real?(a_) AND is_real?(b_) AND num(b_) /= 0 THEN real(num(a_) / num(b_))
+			ELSE undefined ENDIF
     ENDCASES
     MEASURE e BY <<
 
+  real_evaluation?(e: rat_expr)(u: evaluation): boolean = is_real?(eval(e, u))
+
+
   eval_equality: AXIOM
-    FORALL (x,y: rat_expr, u: evaluation): eval(x, u) = eval(y, u) IMPLIES x = y
+    FORALL (x,y: rat_expr):
+        (FORALL (u: evaluation): eval(x, u) = eval(y, u))
+      IMPLIES
+        (x = y)
 
-  zero_sum_identity: THEOREM identity?(+)(zero)
-
-  sum_associative: THEOREM associative?(+)
-  sum_commutative: THEOREM commutative?(+)
 
   END rational_expressions

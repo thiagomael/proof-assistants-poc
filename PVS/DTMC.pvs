@@ -3,8 +3,6 @@ DTMC  [ state: TYPE+ ]
 
   BEGIN
 
-  probability: TYPE+ = {x:nnreal | x <= 1} CONTAINING 1
-
   IMPORTING real_transition_matrices[state]
 
   
