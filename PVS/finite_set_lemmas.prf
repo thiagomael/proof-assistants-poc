@@ -1,0 +1,158 @@
+(finite_set_lemmas
+ (image_is_finite 0
+  (image_is_finite-1 nil 3702242545 ("" (grind) nil nil)
+   ((finite_image application-judgement "finite_set[R]"
+     function_image_aux nil))
+   shostak))
+ (image_every_element_is_finite 0
+  (image_every_element_is_finite-1 nil 3702242551 ("" (grind) nil nil)
+   ((boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (K formal-nonempty-type-decl nil finite_set_lemmas nil)
+    (set type-eq-decl nil sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (V formal-type-decl nil finite_set_lemmas nil)
+    (FALSE const-decl "bool" booleans nil)
+    (extend const-decl "R" extend nil)
+    (image const-decl "set[R]" function_image nil)
+    (restrict const-decl "R" restrict nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (injective? const-decl "bool" functions nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (every const-decl "bool" sets nil)
+    (finite_extend application-judgement "finite_set[T]"
+     extend_set_props nil))
+   shostak))
+ (image_union_is_finite 0
+  (image_union_is_finite-1 nil 3702242624
+   ("" (skeep :preds? t)
+    (("" (use "finite_sets_of_sets[V].Union_finite")
+      (("" (grind) nil nil)) nil))
+    nil)
+   ((Union_finite formula-decl nil finite_sets_of_sets nil)
+    (V formal-type-decl nil finite_set_lemmas nil)
+    (restrict const-decl "R" restrict nil)
+    (image const-decl "set[R]" function_image nil)
+    (K formal-nonempty-type-decl nil finite_set_lemmas nil)
+    (extend const-decl "R" extend nil)
+    (FALSE const-decl "bool" booleans nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (set type-eq-decl nil sets nil)
+    (setofsets type-eq-decl nil sets nil)
+    (setof type-eq-decl nil defined_types nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (finite_extend application-judgement "finite_set[T]"
+     extend_set_props nil)
+    (Union_surjective name-judgement
+     "(surjective?[setofsets[T], set[T]])" sets_lemmas nil)
+    (injective? const-decl "bool" functions nil)
+    (every const-decl "bool" sets nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (number nonempty-type-decl nil numbers nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (>= const-decl "bool" reals nil)
+    (rational_pred const-decl "[real -> boolean]" rationals nil)
+    (rational nonempty-type-from-decl nil rationals nil)
+    (integer_pred const-decl "[rational -> boolean]" integers nil)
+    (int nonempty-type-eq-decl nil integers nil)
+    (nat nonempty-type-eq-decl nil naturalnumbers nil)
+    (NOT const-decl "[bool -> bool]" booleans nil))
+   shostak))
+ (comprehension_equals_union 0
+  (comprehension_equals_union-1 nil 3702243254
+   ("" (skeep :preds? t)
+    (("" (apply-extensionality)
+      (("" (hide 2)
+        (("" (iff)
+          (("" (split) (("1" (grind) nil nil) ("2" (grind) nil nil))
+            nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   ((V formal-type-decl nil finite_set_lemmas nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (restrict const-decl "R" restrict nil)
+    (image const-decl "set[R]" function_image nil)
+    (extend const-decl "R" extend nil)
+    (FALSE const-decl "bool" booleans nil)
+    (Union const-decl "set" sets nil)
+    (setofsets type-eq-decl nil sets nil)
+    (setof type-eq-decl nil defined_types nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (set type-eq-decl nil sets nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (K formal-nonempty-type-decl nil finite_set_lemmas nil)
+    (Union_surjective name-judgement
+     "(surjective?[setofsets[T], set[T]])" sets_lemmas nil)
+    (finite_extend application-judgement "finite_set[T]"
+     extend_set_props nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (nat nonempty-type-eq-decl nil naturalnumbers nil)
+    (int nonempty-type-eq-decl nil integers nil)
+    (integer_pred const-decl "[rational -> boolean]" integers nil)
+    (rational nonempty-type-from-decl nil rationals nil)
+    (rational_pred const-decl "[real -> boolean]" rationals nil)
+    (>= const-decl "bool" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (number nonempty-type-decl nil numbers nil)
+    (S skolem-const-decl "finite_set[K]" finite_set_lemmas nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (f skolem-const-decl "[(S) -> finite_set[V]]" finite_set_lemmas
+     nil)
+    (k!1 skolem-const-decl "(S)" finite_set_lemmas nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (injective? const-decl "bool" functions nil))
+   nil))
+ (comprehension_is_finite 0
+  (comprehension_is_finite-1 nil 3702243290
+   ("" (skeep :preds? t)
+    (("" (use "comprehension_equals_union" ("S" "S" "f" "f"))
+      (("" (rewrite -) (("" (use "image_union_is_finite") nil nil))
+        nil))
+      nil))
+    nil)
+   ((comprehension_equals_union formula-decl nil finite_set_lemmas nil)
+    (K formal-nonempty-type-decl nil finite_set_lemmas nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (set type-eq-decl nil sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (V formal-type-decl nil finite_set_lemmas nil)
+    (image_union_is_finite formula-decl nil finite_set_lemmas nil)
+    (finite_restrict application-judgement "finite_set[S]"
+     restrict_set_props nil)
+    (finite_image application-judgement "finite_set[R]"
+     function_image_aux nil)
+    (finite_extend application-judgement "finite_set[T]"
+     extend_set_props nil)
+    (Union_surjective name-judgement
+     "(surjective?[setofsets[T], set[T]])" sets_lemmas nil))
+   nil)))
+

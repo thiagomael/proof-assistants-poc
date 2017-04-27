@@ -6,8 +6,25 @@
      function_image_aux nil))
    shostak))
  (image_TCC1 0
-  (image_TCC1-1 nil 3701552481 ("" (subtype-tcc) nil nil)
-   ((finite_union application-judgement "finite_set" finite_sets nil))
+  (image_TCC1-1 nil 3701552481
+   ("" (skeep :preds? t)
+    ((""
+      (use "comprehension_is_finite"
+           ("S" "m`dom" "f" "LAMBDA (k: (m`dom)): image(m`trans(k))"))
+      nil nil))
+    nil)
+   ((comprehension_is_finite formula-decl nil finite_set_lemmas nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (set type-eq-decl nil sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (transition_matrix type-eq-decl nil transition_matrices nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (K formal-nonempty-type-decl nil transition_matrices nil)
+    (V formal-type-decl nil transition_matrices nil))
    nil)))
 (transition_matrices_map
  (map_TCC1 0
@@ -20,10 +37,8 @@
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (V1 formal-type-decl nil transition_matrices_map nil)
-    (K formal-nonempty-type-decl nil transition_matrices_map nil)
-    (image const-decl "finite_set[V]" transition_matrices nil)
-    (image const-decl "set[R]" function_image nil)
-    (restrict const-decl "R" restrict nil))
+    (K formal-nonempty-type-decl nil transition_matrices_map nil) nil
+    nil (restrict const-decl "R" restrict nil))
    nil))
  (map_TCC2 0
   (map_TCC2-1 nil 3701555391 ("" (subtype-tcc) nil nil)
@@ -41,10 +56,8 @@
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (V1 formal-type-decl nil transition_matrices_map nil)
-    (K formal-nonempty-type-decl nil transition_matrices_map nil)
-    (image const-decl "finite_set[V]" transition_matrices nil)
-    (image const-decl "set[R]" function_image nil)
-    (image const-decl "finite_set[V]" transition_matrices nil))
+    (K formal-nonempty-type-decl nil transition_matrices_map nil) nil
+    nil nil)
    nil))
  (map_TCC3 0
   (map_TCC3-1 nil 3701555391 ("" (subtype-tcc) nil nil)

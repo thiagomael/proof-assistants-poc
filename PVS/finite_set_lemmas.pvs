@@ -1,0 +1,28 @@
+finite_set_lemmas  [ K: TYPE+,
+		     V: TYPE]
+		: THEORY
+
+  BEGIN
+
+  image_is_finite: LEMMA
+      FORALL (S: finite_set[K], f: [(S) -> finite_set[V]]):
+          is_finite(image(f, S))
+  
+  image_every_element_is_finite: LEMMA
+      FORALL (S: finite_set[K], f: [(S) -> finite_set[V]]):
+          every(is_finite)(image(f, S))
+
+  image_union_is_finite: LEMMA
+      FORALL (S: finite_set[K], f: [(S) -> finite_set[V]]):
+          is_finite(Union(image(f, S)))
+
+  comprehension_equals_union: THEOREM
+      FORALL (S: finite_set[K], f: [(S) -> finite_set[V]]):
+          {v: V | EXISTS (k: (S)): f(k)(v)} = Union(image(f, S))
+
+  comprehension_is_finite: THEOREM
+      FORALL (S: finite_set[K], f: [(S) -> finite_set[V]]):
+          is_finite({v: V | EXISTS (k: (S)): f(k)(v)})
+
+
+  END finite_set_lemmas

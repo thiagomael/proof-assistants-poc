@@ -2,7 +2,9 @@ transition_matrices  [ K: TYPE+,
 		       V: TYPE ]
 		: THEORY
   BEGIN
-  
+
+  IMPORTING finite_set_lemmas[K, V]
+
   transition_row: TYPE = [# dom  : finite_set[K],
   		       	    trans: [(dom) -> V] #]
   image(r: transition_row): finite_set[V] =
@@ -31,14 +33,6 @@ transition_matrices_map [ K: TYPE+,
 
   IMPORTING transition_matrices[K, V1], transition_matrices[K, V2]
 
-  %map(r: transition_matrices[K, V1].transition_row, f: [V1 -> V2]): {rr: transition_row[K, V2] | dom(rr) = dom(r)} =
-  %    (# dom   := dom(r),
-  %    	 trans := LAMBDA (s: (dom(r))): f(trans(r)(s)) #)
-  %	 
-  %map(m: transition_matrix[K, V1], f: [V1 -> V2]): {mm: transition_matrix[K, V2] | dom(mm) = dom(m)} =
-  %    (# dom   := dom(m),
-  %    	 trans := LAMBDA (s: (dom(m))): map(trans(m)(s), f) #)
-  
   map(r: transition_matrices[K, V1].transition_row,
       f: [(image(r)) -> V2]): {rr: transition_row[K, V2] | dom(rr) = dom(r)} =
       (# dom   := dom(r),
