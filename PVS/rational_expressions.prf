@@ -45,10 +45,52 @@
      rational_expressions nil))
    nil))
  (eval_TCC1 0
-  (eval_TCC1-1 nil 3701099612 ("" (tcc) (("" (postpone) nil nil)) nil)
+  (eval_TCC1-1 nil 3702245126 ("" (termination-tcc) nil nil)
    ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
      rational_expressions nil))
    nil))
+ (eval_TCC2 0
+  (eval_TCC2-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC3 0
+  (eval_TCC3-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC4 0
+  (eval_TCC4-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC5 0
+  (eval_TCC5-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC6 0
+  (eval_TCC6-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC7 0
+  (eval_TCC7-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC8 0
+  (eval_TCC8-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC9 0
+  (eval_TCC9-1 nil 3702245126 ("" (termination-tcc) nil nil)
+   ((<< adt-def-decl "(strict_well_founded?[rat_expr])"
+     rational_expressions nil))
+   nil))
+ (eval_TCC10 0
+  (eval_TCC10-1 nil 3702245126 ("" (subtype-tcc) nil nil) nil nil))
  (zero_sum_identity 0
   (zero_sum_identity-1 nil 3701265828
    ("" (expand "identity?")
@@ -65,21 +107,21 @@
         nil))
       nil))
     nil)
-   ((identity? const-decl "bool" operator_defs nil)
-    (eval def-decl "real" rational_expressions nil)
-    (evaluation type-eq-decl nil rational_expressions nil)
-    (real nonempty-type-from-decl nil reals nil)
-    (real_pred const-decl "[number_field -> boolean]" reals nil)
-    (number_field nonempty-type-from-decl nil number_fields nil)
+   ((zero const-decl "rat_expr" rational_expressions nil)
+    (+ const-decl "rat_expr" rational_expressions nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (eval_equality formula-decl nil rational_expressions nil)
+    (variable formal-nonempty-type-decl nil rational_expressions nil)
+    (number nonempty-type-decl nil numbers nil)
+    (boolean nonempty-type-decl nil booleans nil)
     (number_field_pred const-decl "[number -> boolean]" number_fields
      nil)
-    (boolean nonempty-type-decl nil booleans nil)
-    (number nonempty-type-decl nil numbers nil)
-    (variable formal-nonempty-type-decl nil rational_expressions nil)
-    (eval_equality formula-decl nil rational_expressions nil)
-    (rat_expr type-decl nil rational_expressions nil)
-    (+ const-decl "rat_expr" rational_expressions nil)
-    (zero const-decl "rat_expr" rational_expressions nil))
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (eval def-decl "real" rational_expressions nil)
+    (identity? const-decl "bool" operator_defs nil))
    shostak))
  (sum_associative 0
   (sum_associative-1 nil 3701269843

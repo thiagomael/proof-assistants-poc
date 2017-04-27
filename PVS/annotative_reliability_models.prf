@@ -10,8 +10,8 @@
     (rat_expr type-decl nil rational_expressions nil)
     (parametric_transition_row type-eq-decl nil
      parametric_transition_matrices nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
     (member const-decl "bool" sets nil)
     (remove const-decl "set" sets nil) (set type-eq-decl nil sets nil)
     (/= const-decl "boolean" notequal nil))
@@ -196,8 +196,8 @@
      sets_lemmas nil)
     (subset? const-decl "bool" sets nil)
     (row_of_zeros formula-decl nil parametric_transition_matrices nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
     (remove const-decl "set" sets nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
     (is_switch_row? const-decl "boolean" annotative_reliability_models
@@ -333,9 +333,7 @@
    ((is_switch_row? const-decl "boolean" annotative_reliability_models
      nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
-    (remove const-decl "set" sets nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (remove const-decl "set" sets nil) nil
     (row_of_zeros formula-decl nil parametric_transition_matrices nil)
     (subset? const-decl "bool" sets nil)
     (subset_is_partial_order name-judgement "(partial_order?[set[T]])"
@@ -500,9 +498,7 @@
    ((is_switch_row? const-decl "boolean" annotative_reliability_models
      nil)
     (finite_remove application-judgement "finite_set" finite_sets nil)
-    (remove const-decl "set" sets nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (remove const-decl "set" sets nil) nil
     (row_of_zeros formula-decl nil parametric_transition_matrices nil)
     (subset? const-decl "bool" sets nil)
     (subset_is_partial_order name-judgement "(partial_order?[set[T]])"
@@ -554,7 +550,9 @@
     (= const-decl "[T, T -> boolean]" equalities nil)
     (parametric_transition_matrix type-eq-decl nil
      parametric_transition_matrices nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
     (PMC type-eq-decl nil PMC nil))
    nil))
  (the_annotative_evaluation_factory_TCC1 0
@@ -588,7 +586,15 @@
         nil))
       nil))
     nil)
-   (nil nil nil (PMC type-eq-decl nil PMC nil) nil
+   ((wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (s skolem-const-decl "(dom(p`P))" annotative_reliability_models
+     nil)
+    (p skolem-const-decl "(annotative_PMC)"
+     annotative_reliability_models nil)
+    (PMC type-eq-decl nil PMC nil)
+    (vars const-decl "finite_set[variable]"
+     parametric_transition_matrices nil)
     (is_finite const-decl "bool" finite_sets nil)
     (parametric_transition_matrix type-eq-decl nil
      parametric_transition_matrices nil)
@@ -601,7 +607,9 @@
     (variable nonempty-type-decl nil SPL_reliability nil)
     (finite_set type-eq-decl nil finite_sets nil)
     (non_empty_finite_set type-eq-decl nil finite_sets nil)
-    (state nonempty-type-decl nil SPL_reliability nil) nil
+    (state nonempty-type-decl nil SPL_reliability nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
     (is_stochastic_row? const-decl "boolean" real_transition_matrices
      nil)
     (restrict const-decl "R" restrict nil)
@@ -616,7 +624,8 @@
     (eval const-decl "mapped_real_transition_row(r)"
           parametric_transition_matrices nil)
     (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
-    (numfield nonempty-type-eq-decl nil number_fields nil) nil
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (parametric_transition_row type-eq-decl nil
@@ -633,10 +642,16 @@
     (real_minus_real_is_real application-judgement "real" reals nil)
     (real_le_is_total_order name-judgement "(total_order?[real])"
      real_props nil)
-    (eval def-decl "real" rational_expressions nil) nil nil nil
+    (eval def-decl "real" rational_expressions nil)
+    (s1!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
+    (s2!1 skolem-const-decl "(dom(trans(p`P)(s)))"
+     annotative_reliability_models nil)
     (AND const-decl "[bool, bool -> bool]" booleans nil)
-    (finite_remove application-judgement "finite_set[state]"
-     SPL_reliability nil)
+    (finite_remove application-judgement "finite_set" SPL_reliability
+     nil)
     (real_ge_is_total_order name-judgement "(total_order?[real])"
      real_props nil)
     (NOT const-decl "[bool -> bool]" booleans nil)

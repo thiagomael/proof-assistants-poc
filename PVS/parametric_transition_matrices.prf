@@ -171,24 +171,60 @@
    nil))
  (vars_TCC1 0
   (vars_TCC1-1 nil 3701615673
-   ("" (skeep)
-    (("" (typepred "image[state, rat_expr](r)")
-      ((""
-        (case "empty?({v: variable |
-              EXISTS (e: (image[state, rat_expr](r))):
-                vars[variable](e)(v)})")
-        (("1" (rewrite "emptyset_is_empty?")
-          (("1" (forward-chain "finite_emptyset[variable]")
-            (("1" (rewrite -2 -1) nil nil)) nil))
-          nil)
-         ("2" (expand "empty?")
-          (("2" (skeep) (("2" (postpone) nil nil)) nil)) nil))
-        nil))
-      nil))
+   ("" (skeep :preds? t)
+    ((""
+      (use "finite_set_lemmas[rat_expr, variable].comprehension_is_finite"
+           ("S" "image[state,rat_expr](r)" "f" "vars"))
+      (("" (grind) nil nil)) nil))
     nil)
-   nil nil))
+   ((comprehension_is_finite formula-decl nil finite_set_lemmas nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (set type-eq-decl nil sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (state formal-nonempty-type-decl nil parametric_transition_matrices
+     nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (parametric_transition_row type-eq-decl nil
+     parametric_transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (vars def-decl "finite_set[variable]" rational_expressions nil)
+    (variable formal-nonempty-type-decl nil
+     parametric_transition_matrices nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (injective? const-decl "bool" functions nil))
+   nil))
  (vars_TCC2 0
-  (vars_TCC2-1 nil 3701615777 ("" (subtype-tcc) nil nil) nil nil))
+  (vars_TCC2-1 nil 3701615777
+   ("" (skeep :preds? t)
+    ((""
+      (use "finite_set_lemmas[rat_expr, variable].comprehension_is_finite"
+           ("S" "image[state,rat_expr](m)" "f" "vars[variable]"))
+      (("" (grind) nil nil)) nil))
+    nil)
+   ((comprehension_is_finite formula-decl nil finite_set_lemmas nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (set type-eq-decl nil sets nil)
+    (is_finite const-decl "bool" finite_sets nil)
+    (finite_set type-eq-decl nil finite_sets nil)
+    (state formal-nonempty-type-decl nil parametric_transition_matrices
+     nil)
+    (transition_row type-eq-decl nil transition_matrices nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (transition_matrix type-eq-decl nil transition_matrices nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (parametric_transition_matrix type-eq-decl nil
+     parametric_transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (vars def-decl "finite_set[variable]" rational_expressions nil)
+    (variable formal-nonempty-type-decl nil
+     parametric_transition_matrices nil)
+    (rat_expr type-decl nil rational_expressions nil)
+    (injective? const-decl "bool" functions nil))
+   nil))
  (IMP_finite_sets_sum_TCC1 0
   (IMP_finite_sets_sum_TCC1-1 nil 3701710146
    ("" (assuming-tcc) nil nil)
@@ -293,16 +329,16 @@
     (/= const-decl "boolean" notequal nil)
     (remove const-decl "set" sets nil)
     (injective? const-decl "bool" functions nil)
-    (s skolem-const-decl "(rest(SS))" parametric_transition_matrices
-     nil)
-    (SS skolem-const-decl "non_empty_finite_set[(dom(r))]"
-     parametric_transition_matrices nil)
     (r skolem-const-decl "parametric_transition_row"
      parametric_transition_matrices nil)
-    (choose const-decl "(p)" sets nil)
-    (nonempty? const-decl "bool" sets nil)
-    (non_empty_finite_set type-eq-decl nil finite_sets nil)
+    (SS skolem-const-decl "non_empty_finite_set[(dom(r))]"
+     parametric_transition_matrices nil)
+    (s skolem-const-decl "(rest(SS))" parametric_transition_matrices
+     nil)
     (NOT const-decl "[bool -> bool]" booleans nil)
+    (non_empty_finite_set type-eq-decl nil finite_sets nil)
+    (nonempty? const-decl "bool" sets nil)
+    (choose const-decl "(p)" sets nil)
     (finite_emptyset name-judgement "finite_set" finite_sets nil)
     (emptyset const-decl "set" sets nil)
     (empty? const-decl "bool" sets nil)
