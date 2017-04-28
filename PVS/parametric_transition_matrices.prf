@@ -73,8 +73,10 @@
      parametric_transition_matrices nil)
     (transition_row type-eq-decl nil transition_matrices nil)
     (set type-eq-decl nil sets nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
-    (restrict const-decl "R" restrict nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (restrict const-decl "R" restrict nil)
+    (image const-decl "set[R]" function_image nil)
     (finite_image application-judgement "finite_set[R]"
      function_image_aux nil)
     (finite_restrict application-judgement "finite_set[S]"
@@ -104,10 +106,12 @@
      parametric_transition_matrices nil)
     (transition_row type-eq-decl nil transition_matrices nil)
     (set type-eq-decl nil sets nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
     (real_le_is_total_order name-judgement "(total_order?[real])"
      real_props nil)
-    (restrict const-decl "R" restrict nil) nil
+    (restrict const-decl "R" restrict nil)
+    (image const-decl "set[R]" function_image nil)
     (finite_image application-judgement "finite_set[R]"
      function_image_aux nil)
     (finite_restrict application-judgement "finite_set[S]"
@@ -137,9 +141,12 @@
     (number_field nonempty-type-from-decl nil number_fields nil)
     (real_pred const-decl "[number_field -> boolean]" reals nil)
     (real nonempty-type-from-decl nil reals nil)
-    (evaluation type-eq-decl nil rational_expressions nil) nil
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
     (transition_matrix type-eq-decl nil transition_matrices nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (pre_wf_evaluation const-decl "boolean"
@@ -155,10 +162,14 @@
           parametric_transition_matrices nil)
     (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
     (restrict const-decl "R" restrict nil)
-    (numfield nonempty-type-eq-decl nil number_fields nil) nil
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
     (is_stochastic_row? const-decl "boolean" real_transition_matrices
      nil)
-    nil nil nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (image const-decl "set[R]" function_image nil))
    nil))
  (eval_TCC4 0
   (eval_TCC4-1 nil 3702061764 ("" (subtype-tcc) nil nil)
@@ -182,9 +193,12 @@
     (number_field nonempty-type-from-decl nil number_fields nil)
     (real_pred const-decl "[number_field -> boolean]" reals nil)
     (real nonempty-type-from-decl nil reals nil)
-    (evaluation type-eq-decl nil rational_expressions nil) nil
+    (evaluation type-eq-decl nil rational_expressions nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
     (transition_matrix type-eq-decl nil transition_matrices nil)
-    (is_finite const-decl "bool" finite_sets nil) nil
+    (is_finite const-decl "bool" finite_sets nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
     (finite_restrict application-judgement "finite_set[S]"
      restrict_set_props nil)
     (real_le_is_total_order name-judgement "(total_order?[real])"
@@ -202,23 +216,31 @@
           parametric_transition_matrices nil)
     (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
     (restrict const-decl "R" restrict nil)
-    (numfield nonempty-type-eq-decl nil number_fields nil) nil
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
     (is_stochastic_row? const-decl "boolean" real_transition_matrices
      nil)
-    nil nil nil
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (image const-decl "finite_set[V]" transition_matrices nil)
+    (image const-decl "set[R]" function_image nil)
     (real_ge_is_total_order name-judgement "(total_order?[real])"
      real_props nil))
    nil))
  (eval_TCC5 0
   (eval_TCC5-1 nil 3702061764 ("" (subtype-tcc) nil nil)
-   (nil (evaluation type-eq-decl nil rational_expressions nil)
+   ((wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
+    (evaluation type-eq-decl nil rational_expressions nil)
     (parametric_transition_matrix type-eq-decl nil
      parametric_transition_matrices nil)
     (= const-decl "[T, T -> boolean]" equalities nil)
     (set type-eq-decl nil sets nil)
     (transition_row type-eq-decl nil transition_matrices nil)
     (finite_set type-eq-decl nil finite_sets nil)
-    (NOT const-decl "[bool -> bool]" booleans nil) nil
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (wf_evaluation const-decl "boolean" parametric_transition_matrices
+     nil)
     (eval const-decl "mapped_real_transition_row(r)"
           parametric_transition_matrices nil)
     (pre_wf_evaluation const-decl "boolean"
@@ -249,7 +271,8 @@
     (map const-decl "{mm: transition_matrix[K, V2] | dom(mm) = dom(m)}"
          transition_matrices_map nil)
     (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
-    (numfield nonempty-type-eq-decl nil number_fields nil) nil
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (sum const-decl "R" transition_matrices_sum nil)
     (is_stochastic_row? const-decl "boolean" real_transition_matrices
      nil)
     (is_stochastic_matrix? const-decl "boolean"
